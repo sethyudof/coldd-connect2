@@ -57,8 +57,11 @@ export const Column = ({
     <div className="w-80 mx-2">
       <div className="fixed w-80 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50">
         <div 
-          className="flex justify-between items-center pb-4 w-full bg-opacity-80 backdrop-blur-sm"
-          style={{ backgroundColor: `${color}CC` }}  // CC adds 80% opacity
+          className="flex justify-between items-center pb-4 w-full"
+          style={{ 
+            backgroundColor: `${color}80`, // 80 adds 50% opacity in hex
+            backdropFilter: 'blur(8px)',
+          }}
         >
           <h2 
             className="font-semibold px-2 py-1 ml-2"
@@ -68,7 +71,7 @@ export const Column = ({
           </h2>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-white hover:text-white/80">
                 <Plus className="h-4 w-4" />
               </Button>
             </DialogTrigger>
