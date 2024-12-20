@@ -1,21 +1,20 @@
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Clock, Edit2, Check, X } from "lucide-react";
+import { Clock, Edit2 } from "lucide-react";
 import { Draggable } from "@hello-pangea/dnd";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format, addDays, addWeeks, addMonths, addYears, differenceInMilliseconds } from "date-fns";
+import { addDays, addWeeks, addMonths, addYears, differenceInMilliseconds } from "date-fns";
 import { ContactProgressBar } from "./contact/ContactProgressBar";
 import { ContactActions } from "./contact/ContactActions";
+import { ContactInfo } from "./contact/ContactInfo";
+import { ReminderEditor } from "./contact/ReminderEditor";
 
 interface ContactCardProps {
   contact: {
     id: string;
     name: string;
+    email?: string;
+    phone?: string;
     image?: string;
     reminderInterval?: number;
     reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
@@ -31,12 +30,6 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
   const [interval, setInterval] = useState(contact.reminderInterval?.toString() || "");
   const [unit, setUnit] = useState<'days' | 'weeks' | 'months' | 'years'>(contact.reminderUnit || 'months');
   const [date, setDate] = useState<Date | undefined>(contact.startDate || new Date());
-
-  const initials = contact.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
 
   const calculateProgress = () => {
     console.log("Calculating progress for:", contact.name);
@@ -137,91 +130,54 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
           {...provided.dragHandleProps}
         >
           <Card className="p-4 mb-2 cursor-move hover:shadow-md transition-shadow relative">
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarImage src={contact.image} alt={contact.name} />
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <h3 className="font-medium">{contact.name}</h3>
-                {!isEditing ? (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-500 mt-1">
-                      {contact.reminderInterval && (
-                        <>
-                          <Clock className="w-4 h-4 mr-1" />
-                          <span>Every {contact.reminderInterval} {contact.reminderUnit || 'months'}</span>
-                        </>
-                      )}
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEditing(true);
-                      }}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="mt-2 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="number"
-                        value={interval}
-                        onChange={(e) => setInterval(e.target.value)}
-                        className="w-20"
-                        min="1"
-                      />
-                      <Select value={unit} onValueChange={(value: any) => setUnit(value)}>
-                        <SelectTrigger className="w-24">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="days">Days</SelectItem>
-                          <SelectItem value="weeks">Weeks</SelectItem>
-                          <SelectItem value="months">Months</SelectItem>
-                          <SelectItem value="years">Years</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            {date ? format(date, 'PP') : 'Pick a date'}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={setDate}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" onClick={handleSave}>
-                        <Check className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={handleCancel}>
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                {!isEditing && (
-                  <ContactActions
-                    onRenew={handleRenew}
-                    onSnooze={handleSnooze}
-                  />
-                )}
+            <ContactInfo
+              name={contact.name}
+              image={contact.image}
+              email={contact.email}
+              phone={contact.phone}
+            />
+            
+            {!isEditing ? (
+              <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center text-sm text-gray-500">
+                  {contact.reminderInterval && (
+                    <>
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>Every {contact.reminderInterval} {contact.reminderUnit || 'months'}</span>
+                    </>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditing(true);
+                  }}
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
               </div>
-            </div>
+            ) : (
+              <ReminderEditor
+                interval={interval}
+                unit={unit}
+                date={date}
+                onIntervalChange={setInterval}
+                onUnitChange={setUnit}
+                onDateChange={setDate}
+                onSave={handleSave}
+                onCancel={handleCancel}
+              />
+            )}
+            
+            {!isEditing && (
+              <ContactActions
+                onRenew={handleRenew}
+                onSnooze={handleSnooze}
+              />
+            )}
+            
             {contact.reminderInterval && contact.startDate && (
               <ContactProgressBar progress={calculateProgress()} />
             )}
