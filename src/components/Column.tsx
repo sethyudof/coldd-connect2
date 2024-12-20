@@ -11,11 +11,14 @@ interface ColumnProps {
     name: string;
     image?: string;
     reminderInterval?: number;
+    reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
     nextReminder?: Date;
+    startDate?: Date;
   }>;
+  onUpdateContact?: (contactId: string, updates: Partial<ColumnProps['contacts'][0]>) => void;
 }
 
-export const Column = ({ id, title, color, contacts }: ColumnProps) => {
+export const Column = ({ id, title, color, contacts, onUpdateContact }: ColumnProps) => {
   return (
     <div className="w-80 mx-2">
       <h2 
@@ -37,6 +40,7 @@ export const Column = ({ id, title, color, contacts }: ColumnProps) => {
                   key={contact.id} 
                   contact={contact} 
                   index={index}
+                  onUpdate={onUpdateContact}
                 />
               ))}
               {provided.placeholder}

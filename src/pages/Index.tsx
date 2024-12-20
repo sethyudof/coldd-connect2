@@ -13,18 +13,42 @@ const COLDD_COLUMNS = {
   drinks: { title: "Drinks", color: "#2B6CB0" },
 };
 
-// Sample data
+// Sample data with updated types
 const initialContacts = {
   coffee: [
-    { id: "1", name: "John Doe", reminderInterval: 3 },
-    { id: "2", name: "Jane Smith", reminderInterval: 2 },
+    { 
+      id: "1", 
+      name: "John Doe", 
+      reminderInterval: 3,
+      reminderUnit: 'months' as const,
+      startDate: new Date(),
+    },
+    { 
+      id: "2", 
+      name: "Jane Smith", 
+      reminderInterval: 2,
+      reminderUnit: 'months' as const,
+      startDate: new Date(),
+    },
   ],
   outing: [
-    { id: "3", name: "Mike Johnson", reminderInterval: 1 },
+    { 
+      id: "3", 
+      name: "Mike Johnson", 
+      reminderInterval: 1,
+      reminderUnit: 'months' as const,
+      startDate: new Date(),
+    },
   ],
   lunch: [],
   dinner: [
-    { id: "4", name: "Sarah Williams", reminderInterval: 2 },
+    { 
+      id: "4", 
+      name: "Sarah Williams", 
+      reminderInterval: 2,
+      reminderUnit: 'months' as const,
+      startDate: new Date(),
+    },
   ],
   drinks: [],
 };
@@ -70,6 +94,24 @@ const Index = () => {
     }
   };
 
+  const handleUpdateContact = (columnId: keyof typeof contacts, contactId: string, updates: Partial<typeof contacts[keyof typeof contacts][0]>) => {
+    const updatedContacts = {
+      ...contacts,
+      [columnId]: contacts[columnId].map(contact =>
+        contact.id === contactId
+          ? { ...contact, ...updates }
+          : contact
+      )
+    };
+    
+    setContacts(updatedContacts);
+    
+    toast({
+      title: "Contact updated",
+      description: "Reminder settings have been updated.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-7xl mx-auto">
@@ -90,6 +132,9 @@ const Index = () => {
                 title={title}
                 color={color}
                 contacts={contacts[id as keyof typeof contacts]}
+                onUpdateContact={(contactId, updates) => 
+                  handleUpdateContact(id as keyof typeof contacts, contactId, updates)
+                }
               />
             ))}
           </div>
