@@ -56,6 +56,12 @@ const initialContacts: ContactsState = {
 
 const Index = () => {
   const [contacts, setContacts] = useState<ContactsState>(initialContacts);
+  const [allContacts, setAllContacts] = useState<Contact[]>([
+    { id: "1", name: "John Doe", email: "john@example.com", phone: "123-456-7890" },
+    { id: "2", name: "Jane Smith" },
+    { id: "3", name: "Mike Johnson" },
+    { id: "4", name: "Sarah Williams" },
+  ]);
   const { toast } = useToast();
 
   const handleAddContact = (newContact: {
@@ -77,6 +83,10 @@ const Index = () => {
       startDate: new Date(),
     };
 
+    // Add to allContacts
+    setAllContacts(prev => [...prev, contactToAdd]);
+
+    // Add to specific category
     setContacts(prev => ({
       ...prev,
       [newContact.category]: [...prev[newContact.category as keyof ContactsState], contactToAdd],
@@ -98,7 +108,7 @@ const Index = () => {
       )
     };
     
-    setContacts(updatedContacts);
+    setContacts(updatedContacts as ContactsState);
     
     toast({
       title: "Contact updated",
@@ -127,6 +137,7 @@ const Index = () => {
         <ColumnsContainer
           contacts={contacts}
           categories={COLDD_COLUMNS}
+          allContacts={allContacts}
           onUpdateContacts={setContacts}
           onUpdateContact={handleUpdateContact}
         />
