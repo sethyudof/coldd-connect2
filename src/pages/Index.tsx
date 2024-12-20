@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AddContactDialog } from "@/components/contact/AddContactDialog";
-import { ColumnsContainer } from "@/components/contact/ColumnsContainer";
+import { ColumnsContainer, Contact, ContactsState } from "@/components/contact/ColumnsContainer";
 import { useToast } from "@/components/ui/use-toast";
 
 const COLDD_COLUMNS = {
@@ -12,7 +12,7 @@ const COLDD_COLUMNS = {
 };
 
 // Sample data with updated types
-const initialContacts = {
+const initialContacts: ContactsState = {
   coffee: [
     { 
       id: "1", 
@@ -20,16 +20,14 @@ const initialContacts = {
       email: "john@example.com",
       phone: "123-456-7890", 
       reminderInterval: 3,
-      reminderUnit: 'months' as const,
+      reminderUnit: 'months',
       startDate: new Date(),
     },
     { 
       id: "2", 
       name: "Jane Smith",
-      email: "",
-      phone: "", 
       reminderInterval: 2,
-      reminderUnit: 'months' as const,
+      reminderUnit: 'months',
       startDate: new Date(),
     },
   ],
@@ -37,10 +35,8 @@ const initialContacts = {
     { 
       id: "3", 
       name: "Mike Johnson",
-      email: "",
-      phone: "", 
       reminderInterval: 1,
-      reminderUnit: 'months' as const,
+      reminderUnit: 'months',
       startDate: new Date(),
     },
   ],
@@ -49,10 +45,8 @@ const initialContacts = {
     { 
       id: "4", 
       name: "Sarah Williams",
-      email: "",
-      phone: "", 
       reminderInterval: 2,
-      reminderUnit: 'months' as const,
+      reminderUnit: 'months',
       startDate: new Date(),
     },
   ],
@@ -60,7 +54,7 @@ const initialContacts = {
 };
 
 const Index = () => {
-  const [contacts, setContacts] = useState(initialContacts);
+  const [contacts, setContacts] = useState<ContactsState>(initialContacts);
   const { toast } = useToast();
 
   const handleAddContact = (newContact: {
@@ -72,7 +66,7 @@ const Index = () => {
     reminderUnit: 'days' | 'weeks' | 'months' | 'years';
   }) => {
     const newId = Math.random().toString(36).substr(2, 9);
-    const contactToAdd = {
+    const contactToAdd: Contact = {
       id: newId,
       name: newContact.name,
       email: newContact.email,
@@ -84,7 +78,7 @@ const Index = () => {
 
     setContacts(prev => ({
       ...prev,
-      [newContact.category]: [...prev[newContact.category as keyof typeof prev], contactToAdd],
+      [newContact.category]: [...prev[newContact.category as keyof ContactsState], contactToAdd],
     }));
 
     toast({
@@ -93,10 +87,10 @@ const Index = () => {
     });
   };
 
-  const handleUpdateContact = (columnId: string, contactId: string, updates: any) => {
+  const handleUpdateContact = (columnId: string, contactId: string, updates: Partial<Contact>) => {
     const updatedContacts = {
       ...contacts,
-      [columnId]: contacts[columnId as keyof typeof contacts].map(contact =>
+      [columnId]: contacts[columnId as keyof ContactsState].map(contact =>
         contact.id === contactId
           ? { ...contact, ...updates }
           : contact

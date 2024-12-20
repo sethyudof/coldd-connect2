@@ -2,7 +2,7 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import { Column } from "../Column";
 import { useToast } from "@/components/ui/use-toast";
 
-interface Contact {
+export interface Contact {
   id: string;
   name: string;
   email?: string;
@@ -14,7 +14,7 @@ interface Contact {
   startDate?: Date;
 }
 
-type ContactsState = {
+export type ContactsState = {
   coffee: Contact[];
   outing: Contact[];
   lunch: Contact[];
