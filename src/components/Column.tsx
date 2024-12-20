@@ -55,7 +55,7 @@ export const Column = ({
 
   return (
     <div className="w-80 mx-2">
-      <div className="bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50 sticky top-0">
+      <div className="fixed w-80 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50">
         <div 
           className="flex justify-between items-center pb-4 w-full"
           style={{ backgroundColor: color }}
@@ -109,27 +109,29 @@ export const Column = ({
           </Dialog>
         </div>
       </div>
-      <Droppable droppableId={id}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="min-h-[200px]"
-          >
-            <Card className="p-2 bg-gray-50 dark:bg-gray-800">
-              {contacts.map((contact, index) => (
-                <ContactCard 
-                  key={contact.id} 
-                  contact={contact} 
-                  index={index}
-                  onUpdate={onUpdateContact}
-                />
-              ))}
-              {provided.placeholder}
-            </Card>
-          </div>
-        )}
-      </Droppable>
+      <div className="pt-16"> {/* Add padding to account for fixed header */}
+        <Droppable droppableId={id}>
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="min-h-[200px]"
+            >
+              <Card className="p-2 bg-gray-50 dark:bg-gray-800">
+                {contacts.map((contact, index) => (
+                  <ContactCard 
+                    key={contact.id} 
+                    contact={contact} 
+                    index={index}
+                    onUpdate={onUpdateContact}
+                  />
+                ))}
+                {provided.placeholder}
+              </Card>
+            </div>
+          )}
+        </Droppable>
+      </div>
     </div>
   );
 };
