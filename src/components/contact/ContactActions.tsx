@@ -27,22 +27,22 @@ export const ContactActions = ({ onRenew, onSnooze }: ContactActionsProps) => {
   return (
     <div className="flex gap-2 mt-2">
       <Button
-        variant="outline"
-        size="sm"
+        variant="ghost"
+        size="icon"
         onClick={onRenew}
+        className="h-8 w-8 text-primary hover:text-primary/80"
       >
-        <RefreshCw className="h-4 w-4 mr-1" />
-        Renew
+        <RefreshCw className="h-4 w-4" />
       </Button>
       
       <Popover open={isSnoozeOpen} onOpenChange={setIsSnoozeOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-primary hover:text-primary/80"
           >
-            <Timer className="h-4 w-4 mr-1" />
-            Snooze
+            <Timer className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80">
