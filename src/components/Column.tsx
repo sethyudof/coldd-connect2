@@ -55,14 +55,14 @@ export const Column = ({
 
   return (
     <div className="w-80 mx-2">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 sticky top-0">
+      <div className="bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50 sticky top-0">
         <div 
-          className="flex justify-between items-center border-b border-border pb-4"
+          className="flex justify-between items-center pb-4 w-full"
           style={{ backgroundColor: color }}
         >
           <h2 
-            className="font-semibold px-2 py-1 rounded ml-2"
-            style={{ backgroundColor: color, color: 'white' }}
+            className="font-semibold px-2 py-1 ml-2"
+            style={{ color: 'white' }}
           >
             {title}
           </h2>
