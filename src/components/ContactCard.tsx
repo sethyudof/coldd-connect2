@@ -47,29 +47,33 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
       console.log("Missing required data, returning 0");
       return 0;
     }
-    
+
+    const now = new Date();
     let nextDate;
+    
     switch (contact.reminderUnit) {
       case 'days':
-        nextDate = addDays(contact.startDate, contact.reminderInterval);
+        nextDate = addDays(new Date(contact.startDate), contact.reminderInterval);
         break;
       case 'weeks':
-        nextDate = addWeeks(contact.startDate, contact.reminderInterval);
+        nextDate = addWeeks(new Date(contact.startDate), contact.reminderInterval);
         break;
       case 'years':
-        nextDate = addYears(contact.startDate, contact.reminderInterval);
+        nextDate = addYears(new Date(contact.startDate), contact.reminderInterval);
         break;
       case 'months':
       default:
-        nextDate = addMonths(contact.startDate, contact.reminderInterval);
+        nextDate = addMonths(new Date(contact.startDate), contact.reminderInterval);
     }
 
-    const now = new Date();
-    const totalDuration = differenceInMilliseconds(nextDate, contact.startDate);
-    const elapsed = differenceInMilliseconds(now, contact.startDate);
+    const totalDuration = differenceInMilliseconds(nextDate, new Date(contact.startDate));
+    const elapsed = differenceInMilliseconds(now, new Date(contact.startDate));
     
     const progress = (elapsed / totalDuration) * 100;
+    console.log("Total duration:", totalDuration);
+    console.log("Elapsed time:", elapsed);
     console.log("Calculated progress:", progress);
+    
     return Math.min(Math.max(progress, 0), 100);
   };
 
