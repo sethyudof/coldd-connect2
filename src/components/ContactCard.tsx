@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
+import { format, addDays, addWeeks, addMonths, addYears, differenceInMilliseconds } from "date-fns";
+import { Progress } from "@/components/ui/progress";
 
 interface ContactCardProps {
   contact: {
@@ -36,6 +37,33 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
     .join("")
     .toUpperCase();
 
+  const calculateProgress = () => {
+    if (!date || !contact.reminderInterval) return 0;
+    
+    let nextDate;
+    switch (contact.reminderUnit) {
+      case 'days':
+        nextDate = addDays(date, contact.reminderInterval);
+        break;
+      case 'weeks':
+        nextDate = addWeeks(date, contact.reminderInterval);
+        break;
+      case 'years':
+        nextDate = addYears(date, contact.reminderInterval);
+        break;
+      case 'months':
+      default:
+        nextDate = addMonths(date, contact.reminderInterval);
+    }
+
+    const now = new Date();
+    const totalDuration = differenceInMilliseconds(nextDate, date);
+    const elapsed = differenceInMilliseconds(now, date);
+    
+    const progress = (elapsed / totalDuration) * 100;
+    return Math.min(Math.max(progress, 0), 100);
+  };
+
   const handleSave = () => {
     if (onUpdate) {
       onUpdate(contact.id, {
@@ -62,7 +90,7 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <Card className="p-4 mb-2 cursor-move hover:shadow-md transition-shadow">
+          <Card className="p-4 mb-2 cursor-move hover:shadow-md transition-shadow relative">
             <div className="flex items-center gap-3">
               <Avatar>
                 <AvatarImage src={contact.image} alt={contact.name} />
@@ -142,6 +170,11 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
                 )}
               </div>
             </div>
+            {contact.reminderInterval && contact.startDate && (
+              <div className="absolute bottom-0 left-0 right-0 h-1">
+                <Progress value={calculateProgress()} className="rounded-none" />
+              </div>
+            )}
           </Card>
         </div>
       )}
