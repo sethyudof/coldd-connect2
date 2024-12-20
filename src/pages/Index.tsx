@@ -84,19 +84,19 @@ const Index = () => {
 
     setContacts(prev => ({
       ...prev,
-      [newContact.category]: [...prev[newContact.category], contactToAdd],
+      [newContact.category]: [...prev[newContact.category as keyof typeof prev], contactToAdd],
     }));
 
     toast({
       title: "Contact added",
-      description: `${contactToAdd.name} has been added to ${COLDD_COLUMNS[newContact.category].title}`,
+      description: `${contactToAdd.name} has been added to ${COLDD_COLUMNS[newContact.category as keyof typeof COLDD_COLUMNS].title}`,
     });
   };
 
   const handleUpdateContact = (columnId: string, contactId: string, updates: any) => {
     const updatedContacts = {
       ...contacts,
-      [columnId]: contacts[columnId].map(contact =>
+      [columnId]: contacts[columnId as keyof typeof contacts].map(contact =>
         contact.id === contactId
           ? { ...contact, ...updates }
           : contact

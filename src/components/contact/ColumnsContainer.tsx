@@ -14,10 +14,18 @@ interface Contact {
   startDate?: Date;
 }
 
+type ContactsState = {
+  coffee: Contact[];
+  outing: Contact[];
+  lunch: Contact[];
+  dinner: Contact[];
+  drinks: Contact[];
+}
+
 interface ColumnsContainerProps {
-  contacts: Record<string, Contact[]>;
+  contacts: ContactsState;
   categories: Record<string, { title: string; color: string }>;
-  onUpdateContacts: (newContacts: Record<string, Contact[]>) => void;
+  onUpdateContacts: (newContacts: ContactsState) => void;
   onUpdateContact: (columnId: string, contactId: string, updates: Partial<Contact>) => void;
 }
 
@@ -38,18 +46,18 @@ export const ColumnsContainer = ({
     
     if (source.droppableId === destination.droppableId) {
       // Reordering within the same column
-      const column = [...contacts[source.droppableId]];
+      const column = [...contacts[source.droppableId as keyof ContactsState]];
       const [removed] = column.splice(source.index, 1);
       column.splice(destination.index, 0, removed);
       
       onUpdateContacts({
         ...contacts,
         [source.droppableId]: column,
-      });
+      } as ContactsState);
     } else {
       // Moving between columns
-      const sourceColumn = [...contacts[source.droppableId]];
-      const destColumn = [...contacts[destination.droppableId]];
+      const sourceColumn = [...contacts[source.droppableId as keyof ContactsState]];
+      const destColumn = [...contacts[destination.droppableId as keyof ContactsState]];
       const [removed] = sourceColumn.splice(source.index, 1);
       destColumn.splice(destination.index, 0, removed);
       
@@ -57,7 +65,7 @@ export const ColumnsContainer = ({
         ...contacts,
         [source.droppableId]: sourceColumn,
         [destination.droppableId]: destColumn,
-      });
+      } as ContactsState);
 
       toast({
         title: "Contact moved!",
@@ -75,7 +83,7 @@ export const ColumnsContainer = ({
             id={id}
             title={title}
             color={color}
-            contacts={contacts[id]}
+            contacts={contacts[id as keyof ContactsState]}
             onUpdateContact={(contactId, updates) => 
               onUpdateContact(id, contactId, updates)
             }
