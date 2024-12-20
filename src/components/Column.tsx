@@ -55,8 +55,8 @@ export const Column = ({
 
   return (
     <div className="w-80 mx-2">
-      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 sticky top-0 pb-4">
-        <div className="flex justify-between items-center">
+      <div className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 sticky top-0">
+        <div className="flex justify-between items-center border-b border-border pb-4">
           <h2 
             className="font-semibold px-2 py-1 rounded"
             style={{ backgroundColor: color, color: 'white' }}
@@ -105,7 +105,6 @@ export const Column = ({
             </DialogContent>
           </Dialog>
         </div>
-        <div className="h-[2px] bg-border mt-4" />
       </div>
       <Droppable droppableId={id}>
         {(provided) => (

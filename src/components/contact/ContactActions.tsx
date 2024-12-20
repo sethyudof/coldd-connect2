@@ -25,7 +25,7 @@ export const ContactActions = ({ onRenew, onSnooze }: ContactActionsProps) => {
   };
 
   return (
-    <div className="flex gap-2 mt-2">
+    <div className="flex gap-2 mt-2 justify-end">
       <Button
         variant="ghost"
         size="icon"
