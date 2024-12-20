@@ -34,6 +34,8 @@ const Index = () => {
   const { toast } = useToast();
 
   const handleDragEnd = (result: any) => {
+    console.log("Drag ended:", result);
+    
     if (!result.destination) return;
 
     const { source, destination } = result;
