@@ -79,7 +79,7 @@ const Index = () => {
     phone: "",
     category: "coffee",
     reminderInterval: "1",
-    reminderUnit: "months" as const,
+    reminderUnit: "months" as "days" | "weeks" | "months" | "years", // Updated type assertion
   });
   const { toast } = useToast();
 
