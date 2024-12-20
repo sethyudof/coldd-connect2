@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AddContactDialog } from "@/components/contact/AddContactDialog";
 import { ColumnsContainer, Contact, ContactsState } from "@/components/contact/ColumnsContainer";
+import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { useToast } from "@/components/ui/use-toast";
 
 const COLDD_COLUMNS = {
@@ -110,10 +111,17 @@ const Index = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">COLDD Contact</h1>
-          <AddContactDialog 
-            onAddContact={handleAddContact}
-            categories={COLDD_COLUMNS}
-          />
+          <div className="flex items-center">
+            <AddContactDialog 
+              onAddContact={handleAddContact}
+              categories={COLDD_COLUMNS}
+            />
+            <ContactListDialog
+              contacts={contacts}
+              categories={COLDD_COLUMNS}
+              onUpdateContact={handleUpdateContact}
+            />
+          </div>
         </div>
         
         <ColumnsContainer
