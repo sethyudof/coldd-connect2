@@ -57,8 +57,8 @@ export const Column = ({
     <div className="w-80 mx-2">
       <div className="fixed w-80 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50">
         <div 
-          className="flex justify-between items-center pb-4 w-full"
-          style={{ backgroundColor: color }}
+          className="flex justify-between items-center pb-4 w-full bg-opacity-80 backdrop-blur-sm"
+          style={{ backgroundColor: `${color}CC` }}  // CC adds 80% opacity
         >
           <h2 
             className="font-semibold px-2 py-1 ml-2"
