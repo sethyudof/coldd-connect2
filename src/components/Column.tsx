@@ -54,8 +54,8 @@ export const Column = ({
   );
 
   return (
-    <div className="w-80 mx-2">
-      <div className="fixed w-80 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50">
+    <div className="w-80 mx-2 relative h-[calc(100vh-4rem)]">
+      <div className="absolute top-0 left-0 right-0 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50">
         <div 
           className="flex justify-between items-center pb-4 w-full"
           style={{ backgroundColor: color }}
@@ -109,7 +109,7 @@ export const Column = ({
           </Dialog>
         </div>
       </div>
-      <div className="pt-16"> {/* Add padding to account for fixed header */}
+      <div className="pt-16 h-full overflow-y-auto"> 
         <Droppable droppableId={id}>
           {(provided) => (
             <div
