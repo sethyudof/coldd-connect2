@@ -38,27 +38,27 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
     .toUpperCase();
 
   const calculateProgress = () => {
-    if (!date || !contact.reminderInterval) return 0;
+    if (!contact.startDate || !contact.reminderInterval) return 0;
     
     let nextDate;
     switch (contact.reminderUnit) {
       case 'days':
-        nextDate = addDays(date, contact.reminderInterval);
+        nextDate = addDays(contact.startDate, contact.reminderInterval);
         break;
       case 'weeks':
-        nextDate = addWeeks(date, contact.reminderInterval);
+        nextDate = addWeeks(contact.startDate, contact.reminderInterval);
         break;
       case 'years':
-        nextDate = addYears(date, contact.reminderInterval);
+        nextDate = addYears(contact.startDate, contact.reminderInterval);
         break;
       case 'months':
       default:
-        nextDate = addMonths(date, contact.reminderInterval);
+        nextDate = addMonths(contact.startDate, contact.reminderInterval);
     }
 
     const now = new Date();
-    const totalDuration = differenceInMilliseconds(nextDate, date);
-    const elapsed = differenceInMilliseconds(now, date);
+    const totalDuration = differenceInMilliseconds(nextDate, contact.startDate);
+    const elapsed = differenceInMilliseconds(now, contact.startDate);
     
     const progress = (elapsed / totalDuration) * 100;
     return Math.min(Math.max(progress, 0), 100);
@@ -172,7 +172,10 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
             </div>
             {contact.reminderInterval && contact.startDate && (
               <div className="absolute bottom-0 left-0 right-0 h-1">
-                <Progress value={calculateProgress()} className="rounded-none" />
+                <Progress 
+                  value={calculateProgress()} 
+                  className="rounded-none bg-gray-200"
+                />
               </div>
             )}
           </Card>
