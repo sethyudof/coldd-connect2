@@ -38,7 +38,15 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
     .toUpperCase();
 
   const calculateProgress = () => {
-    if (!contact.startDate || !contact.reminderInterval) return 0;
+    console.log("Calculating progress for:", contact.name);
+    console.log("Start date:", contact.startDate);
+    console.log("Reminder interval:", contact.reminderInterval);
+    console.log("Reminder unit:", contact.reminderUnit);
+    
+    if (!contact.startDate || !contact.reminderInterval) {
+      console.log("Missing required data, returning 0");
+      return 0;
+    }
     
     let nextDate;
     switch (contact.reminderUnit) {
@@ -61,6 +69,7 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
     const elapsed = differenceInMilliseconds(now, contact.startDate);
     
     const progress = (elapsed / totalDuration) * 100;
+    console.log("Calculated progress:", progress);
     return Math.min(Math.max(progress, 0), 100);
   };
 
@@ -171,10 +180,14 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
               </div>
             </div>
             {contact.reminderInterval && contact.startDate && (
-              <div className="absolute bottom-0 left-0 right-0 h-1">
+              <div className="absolute bottom-0 left-0 right-0 h-2">
                 <Progress 
                   value={calculateProgress()} 
-                  className="rounded-none bg-gray-200"
+                  className="rounded-none"
+                  style={{
+                    backgroundColor: '#f3f4f6',
+                    '--progress-background': '#ef4444',
+                  } as any}
                 />
               </div>
             )}
