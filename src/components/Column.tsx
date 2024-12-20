@@ -33,7 +33,11 @@ export const Column = ({ id, title, color, contacts }: ColumnProps) => {
           >
             <Card className="p-2 bg-gray-50">
               {contacts.map((contact, index) => (
-                <ContactCard key={contact.id} contact={contact} />
+                <ContactCard 
+                  key={contact.id} 
+                  contact={contact} 
+                  index={index}
+                />
               ))}
               {provided.placeholder}
             </Card>
