@@ -9,7 +9,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, addDays, addWeeks, addMonths, addYears, differenceInMilliseconds } from "date-fns";
-import { Progress } from "@/components/ui/progress";
+import { ContactProgressBar } from "./contact/ContactProgressBar";
+import { ContactActions } from "./contact/ContactActions";
 
 interface ContactCardProps {
   contact: {
@@ -93,6 +94,38 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
     setUnit(contact.reminderUnit || 'months');
     setDate(contact.startDate || new Date());
     setIsEditing(false);
+  };
+
+  const handleRenew = () => {
+    if (onUpdate) {
+      onUpdate(contact.id, {
+        startDate: new Date(),
+      });
+    }
+  };
+
+  const handleSnooze = (snoozeInterval: number, snoozeUnit: 'days' | 'weeks' | 'months' | 'years') => {
+    if (!contact.startDate || !contact.reminderInterval || !onUpdate) return;
+
+    let newStartDate = new Date(contact.startDate);
+    switch (snoozeUnit) {
+      case 'days':
+        newStartDate = addDays(newStartDate, -snoozeInterval);
+        break;
+      case 'weeks':
+        newStartDate = addWeeks(newStartDate, -snoozeInterval);
+        break;
+      case 'months':
+        newStartDate = addMonths(newStartDate, -snoozeInterval);
+        break;
+      case 'years':
+        newStartDate = addYears(newStartDate, -snoozeInterval);
+        break;
+    }
+
+    onUpdate(contact.id, {
+      startDate: newStartDate,
+    });
   };
 
   return (
@@ -181,19 +214,16 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
                     </div>
                   </div>
                 )}
+                {!isEditing && (
+                  <ContactActions
+                    onRenew={handleRenew}
+                    onSnooze={handleSnooze}
+                  />
+                )}
               </div>
             </div>
             {contact.reminderInterval && contact.startDate && (
-              <div className="absolute bottom-0 left-0 right-0 h-2">
-                <Progress 
-                  value={calculateProgress()} 
-                  className="rounded-none"
-                  style={{
-                    backgroundColor: '#f3f4f6',
-                    '--progress-background': '#ef4444',
-                  } as any}
-                />
-              </div>
+              <ContactProgressBar progress={calculateProgress()} />
             )}
           </Card>
         </div>
