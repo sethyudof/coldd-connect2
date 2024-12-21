@@ -106,10 +106,9 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Contact Info</TableHead>
-                <TableHead>List</TableHead>
-                <TableHead>Reminder Interval</TableHead>
+                <TableHead>Contact Details</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Reminder</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
