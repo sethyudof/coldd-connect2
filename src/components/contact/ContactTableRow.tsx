@@ -7,25 +7,29 @@ import { ContactInfo } from "./ContactInfo";
 interface ContactTableRowProps {
   contact: any;
   columnId: string;
-  columnTitle: string;
   categories: Record<string, { title: string; color: string }>;
   editingContact: any;
   handleStartEdit: (columnId: string, contact: any) => void;
   handleSaveEdit: () => void;
   handleCancelEdit: () => void;
   setEditingContact: (contact: any) => void;
+  contactCategories: Array<{
+    id: string;
+    title: string;
+    color: string;
+  }>;
 }
 
 export const ContactTableRow = ({
   contact,
   columnId,
-  columnTitle,
   categories,
   editingContact,
   handleStartEdit,
   handleSaveEdit,
   handleCancelEdit,
-  setEditingContact
+  setEditingContact,
+  contactCategories
 }: ContactTableRowProps) => {
   const isEditing = editingContact?.contactId === contact.id;
 
@@ -49,11 +53,16 @@ export const ContactTableRow = ({
         )}
       </TableCell>
       <TableCell>
-        <div
-          className="px-2 py-1 rounded text-white inline-block"
-          style={{ backgroundColor: categories[columnId].color }}
-        >
-          {columnTitle}
+        <div className="flex flex-wrap gap-2">
+          {contactCategories.map((category) => (
+            <div
+              key={category.id}
+              className="px-2 py-1 rounded text-white inline-block"
+              style={{ backgroundColor: category.color }}
+            >
+              {category.title}
+            </div>
+          ))}
         </div>
       </TableCell>
       <TableCell>

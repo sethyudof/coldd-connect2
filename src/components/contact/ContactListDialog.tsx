@@ -35,27 +35,55 @@ interface EditingContact {
   date?: Date;
 }
 
+interface GroupedContact {
+  contact: {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+    image?: string;
+    reminderInterval?: number;
+    reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
+    startDate?: Date;
+  };
+  categories: Array<{
+    id: string;
+    title: string;
+    color: string;
+  }>;
+}
+
 export const ContactListDialog = ({ contacts, categories, onUpdateContact }: ContactListDialogProps) => {
   const [editingContact, setEditingContact] = useState<EditingContact | null>(null);
 
-  const getAllContacts = () => {
-    const allContacts: Array<{
-      contact: typeof contacts[keyof typeof contacts][0];
-      columnId: string;
-      columnTitle: string;
-    }> = [];
+  const groupContacts = () => {
+    const contactMap = new Map<string, GroupedContact>();
 
     Object.entries(contacts).forEach(([columnId, columnContacts]) => {
       columnContacts.forEach(contact => {
-        allContacts.push({
-          contact,
-          columnId,
-          columnTitle: categories[columnId].title,
-        });
+        if (!contactMap.has(contact.id)) {
+          contactMap.set(contact.id, {
+            contact,
+            categories: [{
+              id: columnId,
+              title: categories[columnId].title,
+              color: categories[columnId].color
+            }]
+          });
+        } else {
+          const existing = contactMap.get(contact.id);
+          if (existing) {
+            existing.categories.push({
+              id: columnId,
+              title: categories[columnId].title,
+              color: categories[columnId].color
+            });
+          }
+        }
       });
     });
 
-    return allContacts;
+    return Array.from(contactMap.values());
   };
 
   const handleStartEdit = (columnId: string, contact: typeof contacts[keyof typeof contacts][0]) => {
@@ -90,6 +118,8 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
     setEditingContact(null);
   };
 
+  const groupedContacts = groupContacts();
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -107,24 +137,24 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
             <TableHeader>
               <TableRow>
                 <TableHead>Contact Details</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead>Categories</TableHead>
                 <TableHead>Reminder</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {getAllContacts().map(({ contact, columnId, columnTitle }) => (
+              {groupedContacts.map(({ contact, categories: contactCategories }) => (
                 <ContactTableRow
-                  key={`${columnId}-${contact.id}`}
+                  key={contact.id}
                   contact={contact}
-                  columnId={columnId}
-                  columnTitle={columnTitle}
+                  columnId={contactCategories[0].id}
                   categories={categories}
                   editingContact={editingContact}
                   handleStartEdit={handleStartEdit}
                   handleSaveEdit={handleSaveEdit}
                   handleCancelEdit={handleCancelEdit}
                   setEditingContact={setEditingContact}
+                  contactCategories={contactCategories}
                 />
               ))}
             </TableBody>
