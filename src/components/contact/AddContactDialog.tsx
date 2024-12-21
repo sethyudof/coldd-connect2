@@ -28,6 +28,7 @@ interface AddContactDialogProps {
 
 export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogProps) => {
   const { toast } = useToast();
+  const [open, setOpen] = useState(false);
   const [newContact, setNewContact] = useState({
     name: "",
     email: "",
@@ -50,6 +51,8 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
       reminderInterval: "1",
       reminderUnit: "months",
     });
+    
+    setOpen(false); // Close dialog after adding contact
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,20 +61,42 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
 
     try {
       console.log('Processing VCF file:', file.name);
-      const vcfContact = await parseVCF(file);
+      const vcfContacts = await parseVCF(file);
       
-      if (vcfContact.name) {
-        setNewContact(prev => ({
-          ...prev,
-          name: vcfContact.name || '',
-          email: vcfContact.email || '',
-          phone: vcfContact.phone || '',
-        }));
-        
-        toast({
-          title: "Contact imported",
-          description: "VCF file successfully imported",
-        });
+      if (vcfContacts.length > 0) {
+        // If multiple contacts, add them all and close dialog
+        if (vcfContacts.length > 1) {
+          vcfContacts.forEach(contact => {
+            if (contact.name) {
+              onAddContact({
+                name: contact.name,
+                email: contact.email || '',
+                phone: contact.phone || '',
+                category: newContact.category,
+                reminderInterval: newContact.reminderInterval,
+                reminderUnit: newContact.reminderUnit,
+              });
+            }
+          });
+          setOpen(false);
+          toast({
+            title: "Contacts imported",
+            description: `${vcfContacts.length} contacts successfully imported`,
+          });
+        } else {
+          // Single contact - populate form
+          const contact = vcfContacts[0];
+          setNewContact(prev => ({
+            ...prev,
+            name: contact.name || '',
+            email: contact.email || '',
+            phone: contact.phone || '',
+          }));
+          toast({
+            title: "Contact imported",
+            description: "VCF file successfully imported",
+          });
+        }
       } else {
         toast({
           title: "Import failed",
@@ -90,7 +115,7 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <PlusCircle className="mr-2 h-4 w-4" />
