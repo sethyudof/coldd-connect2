@@ -25,68 +25,36 @@ interface ContactListDialogProps {
   onUpdateContact: (columnId: string, contactId: string, updates: any) => void;
 }
 
-interface EditingContact {
-  columnId: string;
-  contactId: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  interval?: string;
-  unit?: 'days' | 'weeks' | 'months' | 'years';
-  date?: Date;
-}
-
-interface GroupedContact {
-  contact: {
-    id: string;
-    name: string;
-    email?: string;
-    phone?: string;
-    image?: string;
-    reminderInterval?: number;
-    reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
-    startDate?: Date;
-  };
-  categories: Array<{
-    id: string;
-    title: string;
-    color: string;
-  }>;
-}
-
 export const ContactListDialog = ({ contacts, categories, onUpdateContact }: ContactListDialogProps) => {
-  const [editingContact, setEditingContact] = useState<EditingContact | null>(null);
+  const [editingContact, setEditingContact] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  const groupContacts = () => {
-    const contactMap = new Map<string, GroupedContact>();
-
-    Object.entries(contacts).forEach(([columnId, columnContacts]) => {
-      columnContacts.forEach(contact => {
-        if (!contactMap.has(contact.id)) {
-          contactMap.set(contact.id, {
-            contact,
-            categories: [{
-              id: columnId,
-              title: categories[columnId].title,
-              color: categories[columnId].color
-            }]
-          });
-        } else {
-          const existing = contactMap.get(contact.id);
-          if (existing) {
-            existing.categories.push({
-              id: columnId,
-              title: categories[columnId].title,
-              color: categories[columnId].color
-            });
-          }
-        }
-      });
+  // Create a map of all contacts from all categories
+  const contactMap = new Map();
+  Object.entries(contacts).forEach(([columnId, columnContacts]) => {
+    columnContacts.forEach(contact => {
+      if (!contactMap.has(contact.id)) {
+        contactMap.set(contact.id, {
+          contact,
+          categories: [{
+            id: columnId,
+            title: categories[columnId].title,
+            color: categories[columnId].color
+          }]
+        });
+      } else {
+        const existing = contactMap.get(contact.id);
+        existing.categories.push({
+          id: columnId,
+          title: categories[columnId].title,
+          color: categories[columnId].color
+        });
+      }
     });
+  });
 
-    return Array.from(contactMap.values());
-  };
+  // Convert map to array
+  const groupedContacts = Array.from(contactMap.values());
 
   const handleStartEdit = (columnId: string, contact: typeof contacts[keyof typeof contacts][0]) => {
     setEditingContact({
@@ -123,8 +91,6 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
   const handleContactDeleted = () => {
     queryClient.invalidateQueries({ queryKey: ['contacts'] });
   };
-
-  const groupedContacts = groupContacts();
 
   return (
     <Dialog>

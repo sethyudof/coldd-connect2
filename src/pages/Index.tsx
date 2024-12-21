@@ -29,7 +29,7 @@ const Index = () => {
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const { toast } = useToast();
 
-  // Update the query to fetch contacts and their categories separately
+  // Fetch all contacts and their categories
   const { data: contactsData, isLoading } = useQuery({
     queryKey: ['contacts'],
     queryFn: async () => {
@@ -53,9 +53,24 @@ const Index = () => {
 
   useEffect(() => {
     if (contactsData) {
-      const { contacts, categoryRelations } = contactsData;
+      const { contacts: fetchedContacts, categoryRelations } = contactsData;
       
-      // Transform the data into the format expected by the UI
+      // Transform all contacts into the format expected by the UI
+      const allContactsList = fetchedContacts.map((contact: any) => ({
+        id: contact.id,
+        name: contact.name,
+        email: contact.email,
+        phone: contact.phone,
+        image: contact.image,
+        reminderInterval: contact.reminder_interval,
+        reminderUnit: contact.reminder_unit,
+        startDate: contact.start_date ? new Date(contact.start_date) : undefined,
+      }));
+
+      // Set all contacts
+      setAllContacts(allContactsList);
+
+      // Transform categorized contacts
       const transformedContacts: ContactsState = {
         coffee: [],
         outing: [],
@@ -64,41 +79,15 @@ const Index = () => {
         drinks: [],
       };
 
-      const allContactsList: Contact[] = [];
-
-      contacts.forEach((contact: any) => {
-        const baseContact = {
-          id: contact.id,
-          name: contact.name,
-          email: contact.email,
-          phone: contact.phone,
-          image: contact.image,
-          reminderInterval: contact.reminder_interval,
-          reminderUnit: contact.reminder_unit,
-          startDate: contact.start_date ? new Date(contact.start_date) : undefined,
-        };
-
-        // Add to all contacts list if not already present
-        if (!allContactsList.some(c => c.id === contact.id)) {
-          allContactsList.push(baseContact);
+      // Group contacts by their categories
+      categoryRelations.forEach((relation: any) => {
+        const contact = allContactsList.find(c => c.id === relation.contact_id);
+        if (contact && transformedContacts[relation.category_id as keyof ContactsState]) {
+          transformedContacts[relation.category_id as keyof ContactsState].push(contact);
         }
-
-        // Find all categories for this contact
-        const contactCategories = categoryRelations.filter(
-          (rel: any) => rel.contact_id === contact.id
-        );
-
-        // Add contact to each of its categories
-        contactCategories.forEach((relation: any) => {
-          const categoryId = relation.category_id;
-          if (transformedContacts[categoryId as keyof ContactsState]) {
-            transformedContacts[categoryId as keyof ContactsState].push(baseContact);
-          }
-        });
       });
 
       setContacts(transformedContacts);
-      setAllContacts(allContactsList);
     }
   }, [contactsData]);
 
