@@ -6,7 +6,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { List } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { List, Pencil, X, Check } from "lucide-react";
 import { ContactsState } from "./ColumnsContainer";
 import {
   Table,
@@ -25,14 +26,19 @@ interface ContactListDialogProps {
   onUpdateContact: (columnId: string, contactId: string, updates: any) => void;
 }
 
+interface EditingContact {
+  columnId: string;
+  contactId: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  interval?: string;
+  unit?: 'days' | 'weeks' | 'months' | 'years';
+  date?: Date;
+}
+
 export const ContactListDialog = ({ contacts, categories, onUpdateContact }: ContactListDialogProps) => {
-  const [editingContact, setEditingContact] = useState<{
-    columnId: string;
-    contactId: string;
-    interval: string;
-    unit: 'days' | 'weeks' | 'months' | 'years';
-    date?: Date;
-  } | null>(null);
+  const [editingContact, setEditingContact] = useState<EditingContact | null>(null);
 
   const getAllContacts = () => {
     const allContacts: Array<{
@@ -54,15 +60,35 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
     return allContacts;
   };
 
-  const handleSave = () => {
+  const handleStartEdit = (columnId: string, contact: typeof contacts[keyof typeof contacts][0]) => {
+    setEditingContact({
+      columnId,
+      contactId: contact.id,
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      interval: contact.reminderInterval?.toString(),
+      unit: contact.reminderUnit,
+      date: contact.startDate,
+    });
+  };
+
+  const handleSaveEdit = () => {
     if (!editingContact) return;
 
     onUpdateContact(editingContact.columnId, editingContact.contactId, {
-      reminderInterval: parseInt(editingContact.interval),
+      name: editingContact.name,
+      email: editingContact.email,
+      phone: editingContact.phone,
+      reminderInterval: editingContact.interval ? parseInt(editingContact.interval) : undefined,
       reminderUnit: editingContact.unit,
       startDate: editingContact.date,
     });
 
+    setEditingContact(null);
+  };
+
+  const handleCancelEdit = () => {
     setEditingContact(null);
   };
 
@@ -92,10 +118,45 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
             <TableBody>
               {getAllContacts().map(({ contact, columnId, columnTitle }) => (
                 <TableRow key={`${columnId}-${contact.id}`}>
-                  <TableCell>{contact.name}</TableCell>
                   <TableCell>
-                    {contact.email && <div>{contact.email}</div>}
-                    {contact.phone && <div>{contact.phone}</div>}
+                    {editingContact?.contactId === contact.id ? (
+                      <Input
+                        value={editingContact.name}
+                        onChange={(e) => setEditingContact(prev => 
+                          prev ? { ...prev, name: e.target.value } : null
+                        )}
+                        className="w-full"
+                      />
+                    ) : (
+                      contact.name
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingContact?.contactId === contact.id ? (
+                      <div className="space-y-2">
+                        <Input
+                          value={editingContact.email || ''}
+                          onChange={(e) => setEditingContact(prev => 
+                            prev ? { ...prev, email: e.target.value } : null
+                          )}
+                          placeholder="Email"
+                          className="w-full"
+                        />
+                        <Input
+                          value={editingContact.phone || ''}
+                          onChange={(e) => setEditingContact(prev => 
+                            prev ? { ...prev, phone: e.target.value } : null
+                          )}
+                          placeholder="Phone"
+                          className="w-full"
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        {contact.email && <div>{contact.email}</div>}
+                        {contact.phone && <div>{contact.phone}</div>}
+                      </>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div
@@ -108,8 +169,8 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
                   <TableCell>
                     {editingContact?.contactId === contact.id ? (
                       <ReminderEditor
-                        interval={editingContact.interval}
-                        unit={editingContact.unit}
+                        interval={editingContact.interval || ''}
+                        unit={editingContact.unit || 'months'}
                         date={editingContact.date}
                         onIntervalChange={(value) => 
                           setEditingContact(prev => prev ? { ...prev, interval: value } : null)
@@ -120,31 +181,45 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
                         onDateChange={(date) => 
                           setEditingContact(prev => prev ? { ...prev, date } : null)
                         }
-                        onSave={handleSave}
-                        onCancel={() => setEditingContact(null)}
+                        onSave={handleSaveEdit}
+                        onCancel={handleCancelEdit}
                       />
                     ) : (
                       <div>
                         Every {contact.reminderInterval} {contact.reminderUnit}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="ml-2"
-                          onClick={() => setEditingContact({
-                            columnId,
-                            contactId: contact.id,
-                            interval: contact.reminderInterval?.toString() || "",
-                            unit: contact.reminderUnit || 'months',
-                            date: contact.startDate,
-                          })}
-                        >
-                          Edit
-                        </Button>
                       </div>
                     )}
                   </TableCell>
                   <TableCell>
-                    {/* Add additional actions here if needed */}
+                    {editingContact?.contactId === contact.id ? (
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleSaveEdit}
+                          className="h-8 w-8"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={handleCancelEdit}
+                          className="h-8 w-8"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleStartEdit(columnId, contact)}
+                        className="h-8 w-8"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
