@@ -44,10 +44,10 @@ export const ContactListDialog = ({
   const [editingContact, setEditingContact] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  // Create a map of all contacts with their categories
+  // Create a map of contacts with their categories
   const contactMap = new Map();
   
-  // First, add all contacts to the map (this ensures uncategorized contacts are included)
+  // First, add all contacts to the map
   allContacts.forEach(contact => {
     contactMap.set(contact.id, {
       contact,
@@ -65,12 +65,14 @@ export const ContactListDialog = ({
           title: categories[columnId].title,
           color: categories[columnId].color
         });
+        contactMap.set(contact.id, existingEntry); // Update the map entry
       }
     });
   });
 
-  // Convert map to array
-  const groupedContacts = Array.from(contactMap.values());
+  // Convert map to array and sort by name
+  const groupedContacts = Array.from(contactMap.values())
+    .sort((a, b) => a.contact.name.localeCompare(b.contact.name));
 
   const handleStartEdit = (columnId: string, contact: typeof allContacts[0]) => {
     setEditingContact({
