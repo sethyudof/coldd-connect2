@@ -46,14 +46,16 @@ export const Column = ({
 
   return (
     <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 h-full">
-      <ColumnHeader
-        title={title}
-        color={color}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        availableContacts={availableContacts}
-        onAddContact={onAddContact}
-      />
+      <div className="sticky top-16 z-50">
+        <ColumnHeader
+          title={title}
+          color={color}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          availableContacts={availableContacts}
+          onAddContact={onAddContact}
+        />
+      </div>
       <div className="mt-16">
         <Droppable droppableId={id}>
           {(provided) => (

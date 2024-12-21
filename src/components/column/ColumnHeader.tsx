@@ -22,14 +22,14 @@ export const ColumnHeader = ({
   onAddContact,
 }: ColumnHeaderProps) => {
   return (
-    <div className="fixed w-[inherit] z-50 max-w-[400px]">
-      <div 
-        className="flex justify-between items-center pb-4 w-full px-4"
-        style={{ 
-          backgroundColor: `${color}80`,
-          backdropFilter: 'blur(8px)',
-        }}
-      >
+    <div 
+      className="w-full bg-background/80 backdrop-blur-sm"
+      style={{ 
+        backgroundColor: `${color}80`,
+        backdropFilter: 'blur(8px)',
+      }}
+    >
+      <div className="flex justify-between items-center pb-4 w-full px-4">
         <h2 className="font-semibold text-white">
           {title}
         </h2>
