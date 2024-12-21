@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AddContactDialog } from "@/components/contact/AddContactDialog";
 import { ColumnsContainer, Contact, ContactsState } from "@/components/contact/ColumnsContainer";
 import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getContacts } from "@/lib/supabase";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -16,55 +18,66 @@ const COLDD_COLUMNS = {
 
 // Sample data with updated types
 const initialContacts: ContactsState = {
-  coffee: [
-    { 
-      id: "1", 
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "123-456-7890", 
-      reminderInterval: 3,
-      reminderUnit: 'months',
-      startDate: new Date(),
-    },
-    { 
-      id: "2", 
-      name: "Jane Smith",
-      reminderInterval: 2,
-      reminderUnit: 'months',
-      startDate: new Date(),
-    },
-  ],
-  outing: [
-    { 
-      id: "3", 
-      name: "Mike Johnson",
-      reminderInterval: 1,
-      reminderUnit: 'months',
-      startDate: new Date(),
-    },
-  ],
+  coffee: [],
+  outing: [],
   lunch: [],
-  dinner: [
-    { 
-      id: "4", 
-      name: "Sarah Williams",
-      reminderInterval: 2,
-      reminderUnit: 'months',
-      startDate: new Date(),
-    },
-  ],
+  dinner: [],
   drinks: [],
 };
 
 const Index = () => {
   const [contacts, setContacts] = useState<ContactsState>(initialContacts);
-  const [allContacts, setAllContacts] = useState<Contact[]>([
-    { id: "1", name: "John Doe", email: "john@example.com", phone: "123-456-7890" },
-    { id: "2", name: "Jane Smith" },
-    { id: "3", name: "Mike Johnson" },
-    { id: "4", name: "Sarah Williams" },
-  ]);
+  const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const { toast } = useToast();
+
+  // Add query for fetching contacts
+  const { data: contactsData, isLoading } = useQuery({
+    queryKey: ['contacts'],
+    queryFn: getContacts,
+  });
+
+  useEffect(() => {
+    if (contactsData) {
+      // Transform the data into the format expected by the UI
+      const transformedContacts: ContactsState = {
+        coffee: [],
+        outing: [],
+        lunch: [],
+        dinner: [],
+        drinks: [],
+      };
+
+      const allContactsList: Contact[] = [];
+
+      contactsData.forEach((contact: any) => {
+        const baseContact = {
+          id: contact.id,
+          name: contact.name,
+          email: contact.email,
+          phone: contact.phone,
+          image: contact.image,
+          reminderInterval: contact.reminder_interval,
+          reminderUnit: contact.reminder_unit,
+          startDate: contact.start_date ? new Date(contact.start_date) : undefined,
+        };
+
+        // Add to all contacts list if not already present
+        if (!allContactsList.some(c => c.id === contact.id)) {
+          allContactsList.push(baseContact);
+        }
+
+        // Add to each category the contact belongs to
+        contact.contact_categories.forEach((category: any) => {
+          if (transformedContacts[category.category_name as keyof ContactsState]) {
+            transformedContacts[category.category_name as keyof ContactsState].push(baseContact);
+          }
+        });
+      });
+
+      setContacts(transformedContacts);
+      setAllContacts(allContactsList);
+    }
+  }, [contactsData]);
 
   const toggleTheme = () => {
     const html = document.documentElement;
