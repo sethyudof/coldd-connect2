@@ -28,6 +28,11 @@ export const AddContactDialog = ({
   availableContacts,
   onAddContact,
 }: AddContactDialogProps) => {
+  // Sort contacts alphabetically by name
+  const sortedContacts = [...availableContacts].sort((a, b) => 
+    a.name.localeCompare(b.name)
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -45,7 +50,7 @@ export const AddContactDialog = ({
         </DialogHeader>
         <ScrollArea className="h-[300px] mt-4">
           <div className="space-y-2">
-            {availableContacts.map((contact) => (
+            {sortedContacts.map((contact) => (
               <Button
                 key={contact.id}
                 variant="outline"
@@ -65,7 +70,7 @@ export const AddContactDialog = ({
                 )}
               </Button>
             ))}
-            {availableContacts.length === 0 && (
+            {sortedContacts.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-4">
                 No contacts available to add
               </p>
