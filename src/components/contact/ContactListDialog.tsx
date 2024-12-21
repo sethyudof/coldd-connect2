@@ -8,16 +8,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { List } from "lucide-react";
 import { ContactsState } from "./ColumnsContainer";
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableHeader } from "@/components/ui/table";
 import { useState } from "react";
-import { ContactTableRow } from "./ContactTableRow";
 import { useQueryClient } from "@tanstack/react-query";
+import { ContactListHeader } from "./list/ContactListHeader";
+import { ContactListContent } from "./list/ContactListContent";
 
 interface ContactListDialogProps {
   contacts: ContactsState;
@@ -135,30 +130,18 @@ export const ContactListDialog = ({
         <div className="mt-4">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Contact Details</TableHead>
-                <TableHead>Categories</TableHead>
-                <TableHead>Reminder</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
+              <ContactListHeader />
             </TableHeader>
-            <TableBody>
-              {groupedContacts.map(({ contact, categories: contactCategories }) => (
-                <ContactTableRow
-                  key={contact.id}
-                  contact={contact}
-                  columnId={contactCategories[0]?.id || ''}
-                  categories={categories}
-                  editingContact={editingContact}
-                  handleStartEdit={handleStartEdit}
-                  handleSaveEdit={handleSaveEdit}
-                  handleCancelEdit={handleCancelEdit}
-                  setEditingContact={setEditingContact}
-                  contactCategories={contactCategories}
-                  onDelete={handleContactDeleted}
-                />
-              ))}
-            </TableBody>
+            <ContactListContent
+              groupedContacts={groupedContacts}
+              categories={categories}
+              editingContact={editingContact}
+              handleStartEdit={handleStartEdit}
+              handleSaveEdit={handleSaveEdit}
+              handleCancelEdit={handleCancelEdit}
+              setEditingContact={setEditingContact}
+              onContactDeleted={handleContactDeleted}
+            />
           </Table>
         </div>
       </DialogContent>

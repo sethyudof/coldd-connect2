@@ -1,5 +1,4 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { CircleSlash } from "lucide-react";
 import { ContactEditForm } from "./ContactEditForm";
 import { ContactInfo } from "./ContactInfo";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +15,7 @@ interface ContactTableRowProps {
   handleStartEdit: (columnId: string, contact: any) => void;
   handleSaveEdit: () => void;
   handleCancelEdit: () => void;
-  setEditingContact: (contact: any) => void;  // Added proper type for setEditingContact
+  setEditingContact: (contact: any) => void;
   contactCategories: Array<{
     id: string;
     title: string;
@@ -32,14 +31,15 @@ export const ContactTableRow = ({
   handleStartEdit,
   handleSaveEdit,
   handleCancelEdit,
-  setEditingContact,  // Added to props destructuring
+  setEditingContact,
   contactCategories,
   onDelete
 }: ContactTableRowProps) => {
   const isEditing = editingContact?.contactId === contact.id;
   const { toast } = useToast();
 
-  console.log('Contact categories for', contact.name, ':', contactCategories);
+  console.log('ContactTableRow - Rendering for contact:', contact.name);
+  console.log('ContactTableRow - Categories:', contactCategories);
 
   const handleDelete = async () => {
     try {
@@ -76,9 +76,6 @@ export const ContactTableRow = ({
     <TableRow key={`${columnId}-${contact.id}`}>
       <TableCell>
         <div className="flex items-center gap-2">
-          {contactCategories.length === 0 && (
-            <CircleSlash className="h-4 w-4 text-red-500" />
-          )}
           {isEditing ? (
             <ContactEditForm
               editingContact={editingContact}

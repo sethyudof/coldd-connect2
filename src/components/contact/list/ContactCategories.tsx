@@ -9,17 +9,21 @@ interface ContactCategoriesProps {
 }
 
 export const ContactCategories = ({ categories }: ContactCategoriesProps) => {
-  console.log('Rendering ContactCategories with:', categories);
+  console.log('ContactCategories - Received categories:', categories);
   
   if (!categories || categories.length === 0) {
-    console.log('No categories found for contact');
-    return null;
+    console.log('ContactCategories - No categories found');
+    return (
+      <div className="text-sm text-gray-500 italic">
+        No categories assigned
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-wrap gap-2">
       {categories.map((category) => {
-        console.log('Rendering category:', category);
+        console.log('ContactCategories - Rendering category:', category);
         return (
           <div
             key={category.id}
