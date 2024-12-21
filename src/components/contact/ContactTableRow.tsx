@@ -100,7 +100,7 @@ export const ContactTableRow = ({
           {contactCategories.map((category) => (
             <div
               key={category.id}
-              className="px-2 py-1 rounded text-white text-sm"
+              className="px-2 py-1 rounded text-white text-sm inline-block"
               style={{ backgroundColor: category.color }}
             >
               {category.title}
