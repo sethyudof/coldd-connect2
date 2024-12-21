@@ -44,8 +44,9 @@ export const ContactListDialog = ({
   const [editingContact, setEditingContact] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  console.log('Rendering ContactListDialog with contacts:', contacts);
-  console.log('All contacts:', allContacts);
+  console.log('ContactListDialog - Initial contacts:', contacts);
+  console.log('ContactListDialog - All contacts:', allContacts);
+  console.log('ContactListDialog - Categories:', categories);
 
   // Create a map to store contacts and their categories
   const contactMap = new Map();
@@ -63,7 +64,11 @@ export const ContactListDialog = ({
     columnContacts.forEach(contact => {
       const existingEntry = contactMap.get(contact.id);
       if (existingEntry) {
-        console.log(`Adding category ${columnId} to contact ${contact.name}`);
+        console.log(`Adding category ${columnId} to contact ${contact.name}:`, {
+          id: columnId,
+          title: categories[columnId].title,
+          color: categories[columnId].color
+        });
         existingEntry.categories.push({
           id: columnId,
           title: categories[columnId].title,
@@ -77,7 +82,7 @@ export const ContactListDialog = ({
   const groupedContacts = Array.from(contactMap.values())
     .sort((a, b) => a.contact.name.localeCompare(b.contact.name));
 
-  console.log('Grouped contacts:', groupedContacts);
+  console.log('ContactListDialog - Grouped contacts with categories:', groupedContacts);
 
   const handleStartEdit = (columnId: string, contact: typeof allContacts[0]) => {
     setEditingContact({
