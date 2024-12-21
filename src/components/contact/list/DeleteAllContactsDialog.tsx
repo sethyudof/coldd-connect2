@@ -29,21 +29,33 @@ export const DeleteAllContactsDialog = ({ onConfirm }: DeleteAllContactsDialogPr
 
   const handleSecondConfirm = async () => {
     try {
+      console.log('Starting deletion of all contacts...');
+      
       // First delete all contact_categories entries
       const { error: categoriesError } = await supabase
         .from('contact_categories')
         .delete()
-        .neq('category_id', 'dummy'); // This will match all rows
+        .is('contact_id', 'is not null'); // This will match all rows
 
-      if (categoriesError) throw categoriesError;
+      if (categoriesError) {
+        console.error('Error deleting contact categories:', categoriesError);
+        throw categoriesError;
+      }
+
+      console.log('Successfully deleted all contact categories');
 
       // Then delete all contacts
       const { error: contactsError } = await supabase
         .from('contacts')
         .delete()
-        .neq('id', 'dummy'); // This will match all rows
+        .is('id', 'is not null'); // This will match all rows
 
-      if (contactsError) throw contactsError;
+      if (contactsError) {
+        console.error('Error deleting contacts:', contactsError);
+        throw contactsError;
+      }
+
+      console.log('Successfully deleted all contacts');
 
       onConfirm();
       setIsSecondConfirmOpen(false);
