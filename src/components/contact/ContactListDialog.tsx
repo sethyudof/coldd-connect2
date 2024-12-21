@@ -6,19 +6,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { List, Pencil, X, Check } from "lucide-react";
+import { List } from "lucide-react";
 import { ContactsState } from "./ColumnsContainer";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ReminderEditor } from "./ReminderEditor";
 import { useState } from "react";
+import { ContactTableRow } from "./ContactTableRow";
 
 interface ContactListDialogProps {
   contacts: ContactsState;
@@ -117,111 +115,18 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
             </TableHeader>
             <TableBody>
               {getAllContacts().map(({ contact, columnId, columnTitle }) => (
-                <TableRow key={`${columnId}-${contact.id}`}>
-                  <TableCell>
-                    {editingContact?.contactId === contact.id ? (
-                      <Input
-                        value={editingContact.name}
-                        onChange={(e) => setEditingContact(prev => 
-                          prev ? { ...prev, name: e.target.value } : null
-                        )}
-                        className="w-full"
-                      />
-                    ) : (
-                      contact.name
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editingContact?.contactId === contact.id ? (
-                      <div className="space-y-2">
-                        <Input
-                          value={editingContact.email || ''}
-                          onChange={(e) => setEditingContact(prev => 
-                            prev ? { ...prev, email: e.target.value } : null
-                          )}
-                          placeholder="Email"
-                          className="w-full"
-                        />
-                        <Input
-                          value={editingContact.phone || ''}
-                          onChange={(e) => setEditingContact(prev => 
-                            prev ? { ...prev, phone: e.target.value } : null
-                          )}
-                          placeholder="Phone"
-                          className="w-full"
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        {contact.email && <div>{contact.email}</div>}
-                        {contact.phone && <div>{contact.phone}</div>}
-                      </>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div
-                      className="px-2 py-1 rounded text-white inline-block"
-                      style={{ backgroundColor: categories[columnId].color }}
-                    >
-                      {columnTitle}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {editingContact?.contactId === contact.id ? (
-                      <ReminderEditor
-                        interval={editingContact.interval || ''}
-                        unit={editingContact.unit || 'months'}
-                        date={editingContact.date}
-                        onIntervalChange={(value) => 
-                          setEditingContact(prev => prev ? { ...prev, interval: value } : null)
-                        }
-                        onUnitChange={(value) => 
-                          setEditingContact(prev => prev ? { ...prev, unit: value } : null)
-                        }
-                        onDateChange={(date) => 
-                          setEditingContact(prev => prev ? { ...prev, date } : null)
-                        }
-                        onSave={handleSaveEdit}
-                        onCancel={handleCancelEdit}
-                      />
-                    ) : (
-                      <div>
-                        Every {contact.reminderInterval} {contact.reminderUnit}
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editingContact?.contactId === contact.id ? (
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={handleSaveEdit}
-                          className="h-8 w-8"
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={handleCancelEdit}
-                          className="h-8 w-8"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleStartEdit(columnId, contact)}
-                        className="h-8 w-8"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
+                <ContactTableRow
+                  key={`${columnId}-${contact.id}`}
+                  contact={contact}
+                  columnId={columnId}
+                  columnTitle={columnTitle}
+                  categories={categories}
+                  editingContact={editingContact}
+                  handleStartEdit={handleStartEdit}
+                  handleSaveEdit={handleSaveEdit}
+                  handleCancelEdit={handleCancelEdit}
+                  setEditingContact={setEditingContact}
+                />
               ))}
             </TableBody>
           </Table>
