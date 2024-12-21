@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ContactListHeader } from "./list/ContactListHeader";
 import { ContactListContent } from "./list/ContactListContent";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DeleteAllContactsDialog } from "./list/DeleteAllContactsDialog";
 
 interface ContactListDialogProps {
   contacts: ContactsState;
@@ -116,6 +117,10 @@ export const ContactListDialog = ({
     queryClient.invalidateQueries({ queryKey: ['contacts'] });
   };
 
+  const handleAllContactsDeleted = () => {
+    queryClient.invalidateQueries({ queryKey: ['contacts'] });
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -125,8 +130,9 @@ export const ContactListDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh]">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle>Contact List</DialogTitle>
+          <DeleteAllContactsDialog onConfirm={handleAllContactsDeleted} />
         </DialogHeader>
         <ScrollArea className="h-[calc(80vh-8rem)]">
           <div className="mt-4">
