@@ -100,7 +100,7 @@ export const ContactTableRow = ({
           {contactCategories.map((category) => (
             <div
               key={category.id}
-              className="px-2 py-1 rounded text-white inline-block"
+              className="px-2 py-1 rounded text-white text-sm"
               style={{ backgroundColor: category.color }}
             >
               {category.title}
@@ -110,7 +110,7 @@ export const ContactTableRow = ({
       </TableCell>
       <TableCell>
         {!isEditing && contact.reminderInterval && (
-          <div>
+          <div className="text-sm text-gray-600">
             Every {contact.reminderInterval} {contact.reminderUnit}
           </div>
         )}

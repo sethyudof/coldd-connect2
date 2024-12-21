@@ -44,9 +44,6 @@ export const ContactListDialog = ({
   const [editingContact, setEditingContact] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  console.log('ContactListDialog - all contacts:', allContacts);
-  console.log('ContactListDialog - categorized contacts:', contacts);
-
   // Create a map of all contacts with their categories
   const contactMap = new Map();
   
@@ -71,8 +68,6 @@ export const ContactListDialog = ({
       }
     });
   });
-
-  console.log('ContactListDialog - contact map:', Array.from(contactMap.values()));
 
   // Convert map to array
   const groupedContacts = Array.from(contactMap.values());
