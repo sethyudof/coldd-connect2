@@ -54,8 +54,8 @@ export const Column = ({
   );
 
   return (
-    <div className="w-80 mx-2">
-      <div className="fixed w-80 bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 z-50">
+    <div className="w-80 mx-2 h-full">
+      <div className="fixed w-80">
         <div 
           className="flex justify-between items-center pb-4 w-full"
           style={{ 
@@ -118,7 +118,7 @@ export const Column = ({
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="min-h-[200px]"
+              className="min-h-[calc(100vh-8rem)]"
             >
               <Card className="p-2 bg-gray-50 dark:bg-gray-800">
                 {contacts.map((contact, index) => (
