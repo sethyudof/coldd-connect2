@@ -22,26 +22,33 @@ export const VcfImport = ({ onSuccess }: VcfImportProps) => {
     try {
       console.log('Processing VCF file:', file.name);
       const vcfContacts = await parseVCF(file);
+      console.log('Parsed contacts:', vcfContacts);
       
       if (vcfContacts.length > 0) {
         for (const contact of vcfContacts) {
           if (contact.name) {
-            const { error } = await supabase
+            console.log('Inserting contact:', contact);
+            const { data, error } = await supabase
               .from('contacts')
               .insert([{
                 name: contact.name,
                 email: contact.email,
                 phone: contact.phone,
-              }]);
+              }])
+              .select();
 
             if (error) {
               console.error('Error adding contact:', error);
+              throw error;
             }
+
+            console.log('Successfully inserted contact:', data);
           }
         }
 
-        // Invalidate the contacts query to trigger a refresh
-        queryClient.invalidateQueries({ queryKey: ['contacts'] });
+        // Invalidate both the contacts query and any related queries
+        await queryClient.invalidateQueries();
+        console.log('Query cache invalidated');
 
         onSuccess();
         toast({
