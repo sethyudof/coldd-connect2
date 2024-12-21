@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { ContactTableRow } from "./ContactTableRow";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ContactListDialogProps {
   contacts: ContactsState;
@@ -55,6 +56,7 @@ interface GroupedContact {
 
 export const ContactListDialog = ({ contacts, categories, onUpdateContact }: ContactListDialogProps) => {
   const [editingContact, setEditingContact] = useState<EditingContact | null>(null);
+  const queryClient = useQueryClient();
 
   const groupContacts = () => {
     const contactMap = new Map<string, GroupedContact>();
@@ -118,6 +120,10 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
     setEditingContact(null);
   };
 
+  const handleContactDeleted = () => {
+    queryClient.invalidateQueries({ queryKey: ['contacts'] });
+  };
+
   const groupedContacts = groupContacts();
 
   return (
@@ -147,7 +153,7 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
                 <ContactTableRow
                   key={contact.id}
                   contact={contact}
-                  columnId={contactCategories[0].id}
+                  columnId={contactCategories[0]?.id || ''}
                   categories={categories}
                   editingContact={editingContact}
                   handleStartEdit={handleStartEdit}
@@ -155,6 +161,7 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
                   handleCancelEdit={handleCancelEdit}
                   setEditingContact={setEditingContact}
                   contactCategories={contactCategories}
+                  onDelete={handleContactDeleted}
                 />
               ))}
             </TableBody>
