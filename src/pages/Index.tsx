@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getContacts } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -33,7 +33,16 @@ const Index = () => {
   // Add query for fetching contacts
   const { data: contactsData, isLoading } = useQuery({
     queryKey: ['contacts'],
-    queryFn: getContacts,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('contacts')
+        .select(`
+          *,
+          contact_categories (*)
+        `);
+      if (error) throw error;
+      return data;
+    },
   });
 
   useEffect(() => {
