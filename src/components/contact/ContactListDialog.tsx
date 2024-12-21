@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { ContactListHeader } from "./list/ContactListHeader";
 import { ContactListContent } from "./list/ContactListContent";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ContactListDialogProps {
   contacts: ContactsState;
@@ -123,27 +124,29 @@ export const ContactListDialog = ({
           Contact List
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl max-h-[80vh]">
         <DialogHeader>
           <DialogTitle>Contact List</DialogTitle>
         </DialogHeader>
-        <div className="mt-4">
-          <Table>
-            <TableHeader>
-              <ContactListHeader />
-            </TableHeader>
-            <ContactListContent
-              groupedContacts={groupedContacts}
-              categories={categories}
-              editingContact={editingContact}
-              handleStartEdit={handleStartEdit}
-              handleSaveEdit={handleSaveEdit}
-              handleCancelEdit={handleCancelEdit}
-              setEditingContact={setEditingContact}
-              onContactDeleted={handleContactDeleted}
-            />
-          </Table>
-        </div>
+        <ScrollArea className="h-[calc(80vh-8rem)]">
+          <div className="mt-4">
+            <Table>
+              <TableHeader>
+                <ContactListHeader />
+              </TableHeader>
+              <ContactListContent
+                groupedContacts={groupedContacts}
+                categories={categories}
+                editingContact={editingContact}
+                handleStartEdit={handleStartEdit}
+                handleSaveEdit={handleSaveEdit}
+                handleCancelEdit={handleCancelEdit}
+                setEditingContact={setEditingContact}
+                onContactDeleted={handleContactDeleted}
+              />
+            </Table>
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
