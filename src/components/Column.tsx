@@ -1,17 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { ContactCard } from "./ContactCard";
 import { Droppable } from "@hello-pangea/dnd";
-import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "./ui/scroll-area";
 import { useState } from "react";
+import { ColumnHeader } from "./column/ColumnHeader";
 
 interface ColumnProps {
   id: string;
@@ -55,64 +46,14 @@ export const Column = ({
 
   return (
     <div className="w-80 mx-2 h-full">
-      <div className="fixed w-80 z-50">
-        <div 
-          className="flex justify-between items-center pb-4 w-full px-4"
-          style={{ 
-            backgroundColor: `${color}80`,
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <h2 className="font-semibold text-white">
-            {title}
-          </h2>
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-white hover:bg-white/20"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Contact to {title}</DialogTitle>
-              </DialogHeader>
-              <ScrollArea className="h-[300px] mt-4">
-                <div className="space-y-2">
-                  {availableContacts.map((contact) => (
-                    <Button
-                      key={contact.id}
-                      variant="outline"
-                      className="w-full justify-start"
-                      onClick={() => {
-                        if (onAddContact) {
-                          onAddContact(contact.id);
-                          setIsOpen(false);
-                        }
-                      }}
-                    >
-                      {contact.name}
-                      {contact.email && (
-                        <span className="ml-2 text-sm text-muted-foreground">
-                          ({contact.email})
-                        </span>
-                      )}
-                    </Button>
-                  ))}
-                  {availableContacts.length === 0 && (
-                    <p className="text-sm text-muted-foreground text-center py-4">
-                      No contacts available to add
-                    </p>
-                  )}
-                </div>
-              </ScrollArea>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+      <ColumnHeader
+        title={title}
+        color={color}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        availableContacts={availableContacts}
+        onAddContact={onAddContact}
+      />
       <div className="pt-16">
         <Droppable droppableId={id}>
           {(provided) => (
