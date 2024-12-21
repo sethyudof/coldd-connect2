@@ -33,12 +33,15 @@ const Index = () => {
   const { data: contactsData, isLoading } = useQuery({
     queryKey: ['contacts'],
     queryFn: async () => {
+      console.log('Fetching contacts and categories...');
+      
       // First, fetch all contacts
       const { data: contacts, error: contactsError } = await supabase
         .from('contacts')
         .select('*');
       
       if (contactsError) throw contactsError;
+      console.log('Fetched contacts:', contacts);
 
       // Then, fetch all contact-category relationships
       const { data: categoryRelations, error: categoriesError } = await supabase
@@ -46,6 +49,7 @@ const Index = () => {
         .select('*');
       
       if (categoriesError) throw categoriesError;
+      console.log('Fetched category relations:', categoryRelations);
 
       return { contacts, categoryRelations };
     },
@@ -67,6 +71,8 @@ const Index = () => {
         startDate: contact.start_date ? new Date(contact.start_date) : undefined,
       }));
 
+      console.log('Transformed all contacts:', allContactsList);
+
       // Set all contacts
       setAllContacts(allContactsList);
 
@@ -87,6 +93,7 @@ const Index = () => {
         }
       });
 
+      console.log('Transformed categorized contacts:', transformedContacts);
       setContacts(transformedContacts);
     }
   }, [contactsData]);
@@ -177,6 +184,7 @@ const Index = () => {
               />
               <ContactListDialog
                 contacts={contacts}
+                allContacts={allContacts}
                 categories={COLDD_COLUMNS}
                 onUpdateContact={handleUpdateContact}
               />

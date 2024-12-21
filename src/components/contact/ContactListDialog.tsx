@@ -21,30 +21,49 @@ import { useQueryClient } from "@tanstack/react-query";
 
 interface ContactListDialogProps {
   contacts: ContactsState;
+  allContacts: Array<{
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+    image?: string;
+    reminderInterval?: number;
+    reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
+    startDate?: Date;
+  }>;
   categories: Record<string, { title: string; color: string }>;
   onUpdateContact: (columnId: string, contactId: string, updates: any) => void;
 }
 
-export const ContactListDialog = ({ contacts, categories, onUpdateContact }: ContactListDialogProps) => {
+export const ContactListDialog = ({ 
+  contacts, 
+  allContacts,
+  categories, 
+  onUpdateContact 
+}: ContactListDialogProps) => {
   const [editingContact, setEditingContact] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  // Create a map of all contacts from all categories
+  console.log('ContactListDialog - all contacts:', allContacts);
+  console.log('ContactListDialog - categorized contacts:', contacts);
+
+  // Create a map of all contacts with their categories
   const contactMap = new Map();
+  
+  // First, add all contacts to the map (this ensures uncategorized contacts are included)
+  allContacts.forEach(contact => {
+    contactMap.set(contact.id, {
+      contact,
+      categories: []
+    });
+  });
+
+  // Then add category information for categorized contacts
   Object.entries(contacts).forEach(([columnId, columnContacts]) => {
     columnContacts.forEach(contact => {
-      if (!contactMap.has(contact.id)) {
-        contactMap.set(contact.id, {
-          contact,
-          categories: [{
-            id: columnId,
-            title: categories[columnId].title,
-            color: categories[columnId].color
-          }]
-        });
-      } else {
-        const existing = contactMap.get(contact.id);
-        existing.categories.push({
+      const existingEntry = contactMap.get(contact.id);
+      if (existingEntry) {
+        existingEntry.categories.push({
           id: columnId,
           title: categories[columnId].title,
           color: categories[columnId].color
@@ -53,10 +72,12 @@ export const ContactListDialog = ({ contacts, categories, onUpdateContact }: Con
     });
   });
 
+  console.log('ContactListDialog - contact map:', Array.from(contactMap.values()));
+
   // Convert map to array
   const groupedContacts = Array.from(contactMap.values());
 
-  const handleStartEdit = (columnId: string, contact: typeof contacts[keyof typeof contacts][0]) => {
+  const handleStartEdit = (columnId: string, contact: typeof allContacts[0]) => {
     setEditingContact({
       columnId,
       contactId: contact.id,
