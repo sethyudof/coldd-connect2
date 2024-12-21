@@ -57,21 +57,22 @@ export const Column = ({
     <div className="w-80 mx-2 h-full">
       <div className="fixed w-80 z-50">
         <div 
-          className="flex justify-between items-center pb-4 w-full"
+          className="flex justify-between items-center pb-4 w-full px-4"
           style={{ 
-            backgroundColor: `${color}80`, // 80 adds 50% opacity in hex
+            backgroundColor: `${color}80`,
             backdropFilter: 'blur(8px)',
           }}
         >
-          <h2 
-            className="font-semibold px-2 py-1 ml-2"
-            style={{ color: 'white' }}
-          >
+          <h2 className="font-semibold text-white">
             {title}
           </h2>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-white hover:text-white/80">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-white hover:bg-white/20"
+              >
                 <Plus className="h-4 w-4" />
               </Button>
             </DialogTrigger>
@@ -112,7 +113,7 @@ export const Column = ({
           </Dialog>
         </div>
       </div>
-      <div className="pt-16"> {/* Add padding to account for fixed header */}
+      <div className="pt-16">
         <Droppable droppableId={id}>
           {(provided) => (
             <div
