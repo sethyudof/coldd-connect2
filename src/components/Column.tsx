@@ -45,7 +45,7 @@ export const Column = ({
   );
 
   return (
-    <div className="w-80 mx-2 h-full">
+    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 h-full">
       <ColumnHeader
         title={title}
         color={color}

@@ -22,7 +22,7 @@ export const ColumnHeader = ({
   onAddContact,
 }: ColumnHeaderProps) => {
   return (
-    <div className="fixed w-80 z-50">
+    <div className="fixed w-[inherit] z-50">
       <div 
         className="flex justify-between items-center pb-4 w-full px-4"
         style={{ 
