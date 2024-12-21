@@ -1,9 +1,11 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, X, Trash2 } from "lucide-react";
+import { Pencil, Check, X } from "lucide-react";
+import { DeleteContactDialog } from "./DeleteContactDialog";
 
 interface ContactActionsProps {
   isEditing: boolean;
+  contactName: string;
   onSave: () => void;
   onCancel: () => void;
   onEdit: () => void;
@@ -12,6 +14,7 @@ interface ContactActionsProps {
 
 export const ContactActions = ({ 
   isEditing, 
+  contactName,
   onSave, 
   onCancel, 
   onEdit, 
@@ -48,14 +51,10 @@ export const ContactActions = ({
           >
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onDelete}
-            className="h-8 w-8 text-red-500 hover:text-red-600"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+          <DeleteContactDialog
+            contactName={contactName}
+            onConfirm={onDelete}
+          />
         </>
       )}
     </div>

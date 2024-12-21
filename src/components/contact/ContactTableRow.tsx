@@ -105,6 +105,7 @@ export const ContactTableRow = ({
       <TableCell>
         <ContactActions
           isEditing={isEditing}
+          contactName={contact.name}
           onSave={handleSaveEdit}
           onCancel={handleCancelEdit}
           onEdit={() => handleStartEdit(columnId, contact)}
