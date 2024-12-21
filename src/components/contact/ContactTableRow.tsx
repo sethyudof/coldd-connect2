@@ -16,7 +16,7 @@ interface ContactTableRowProps {
   handleStartEdit: (columnId: string, contact: any) => void;
   handleSaveEdit: () => void;
   handleCancelEdit: () => void;
-  setEditingContact: (contact: any) => void;
+  setEditingContact: (contact: any) => void;  // Added proper type for setEditingContact
   contactCategories: Array<{
     id: string;
     title: string;
@@ -32,6 +32,7 @@ export const ContactTableRow = ({
   handleStartEdit,
   handleSaveEdit,
   handleCancelEdit,
+  setEditingContact,  // Added to props destructuring
   contactCategories,
   onDelete
 }: ContactTableRowProps) => {
