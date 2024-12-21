@@ -35,7 +35,7 @@ export const DeleteAllContactsDialog = ({ onConfirm }: DeleteAllContactsDialogPr
       const { error: categoriesError } = await supabase
         .from('contact_categories')
         .delete()
-        .is('contact_id', 'is not null'); // This will match all rows
+        .not('contact_id', 'is', 'null'); // This will match all non-null rows
 
       if (categoriesError) {
         console.error('Error deleting contact categories:', categoriesError);
@@ -48,7 +48,7 @@ export const DeleteAllContactsDialog = ({ onConfirm }: DeleteAllContactsDialogPr
       const { error: contactsError } = await supabase
         .from('contacts')
         .delete()
-        .is('id', 'is not null'); // This will match all rows
+        .not('id', 'is', 'null'); // This will match all non-null rows
 
       if (contactsError) {
         console.error('Error deleting contacts:', contactsError);
