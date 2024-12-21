@@ -9,7 +9,90 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          color: string
+          id: string
+          title: string
+        }
+        Insert: {
+          color: string
+          id: string
+          title: string
+        }
+        Update: {
+          color?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      contact_categories: {
+        Row: {
+          category_id: string
+          contact_id: string
+        }
+        Insert: {
+          category_id: string
+          contact_id: string
+        }
+        Update: {
+          category_id?: string
+          contact_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_categories_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contacts: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          image: string | null
+          name: string
+          phone: string | null
+          reminder_interval: number | null
+          reminder_unit: string | null
+          start_date: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          image?: string | null
+          name: string
+          phone?: string | null
+          reminder_interval?: number | null
+          reminder_unit?: string | null
+          start_date?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+          phone?: string | null
+          reminder_interval?: number | null
+          reminder_unit?: string | null
+          start_date?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

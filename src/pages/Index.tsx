@@ -16,7 +16,6 @@ const COLDD_COLUMNS = {
   drinks: { title: "Drinks", color: "#2B6CB0" },
 };
 
-// Sample data with updated types
 const initialContacts: ContactsState = {
   coffee: [],
   outing: [],
@@ -30,23 +29,32 @@ const Index = () => {
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const { toast } = useToast();
 
-  // Add query for fetching contacts
+  // Update the query to fetch contacts and their categories separately
   const { data: contactsData, isLoading } = useQuery({
     queryKey: ['contacts'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First, fetch all contacts
+      const { data: contacts, error: contactsError } = await supabase
         .from('contacts')
-        .select(`
-          *,
-          contact_categories (*)
-        `);
-      if (error) throw error;
-      return data;
+        .select('*');
+      
+      if (contactsError) throw contactsError;
+
+      // Then, fetch all contact-category relationships
+      const { data: categoryRelations, error: categoriesError } = await supabase
+        .from('contact_categories')
+        .select('*');
+      
+      if (categoriesError) throw categoriesError;
+
+      return { contacts, categoryRelations };
     },
   });
 
   useEffect(() => {
     if (contactsData) {
+      const { contacts, categoryRelations } = contactsData;
+      
       // Transform the data into the format expected by the UI
       const transformedContacts: ContactsState = {
         coffee: [],
@@ -58,7 +66,7 @@ const Index = () => {
 
       const allContactsList: Contact[] = [];
 
-      contactsData.forEach((contact: any) => {
+      contacts.forEach((contact: any) => {
         const baseContact = {
           id: contact.id,
           name: contact.name,
@@ -75,10 +83,16 @@ const Index = () => {
           allContactsList.push(baseContact);
         }
 
-        // Add to each category the contact belongs to
-        contact.contact_categories.forEach((category: any) => {
-          if (transformedContacts[category.category_name as keyof ContactsState]) {
-            transformedContacts[category.category_name as keyof ContactsState].push(baseContact);
+        // Find all categories for this contact
+        const contactCategories = categoryRelations.filter(
+          (rel: any) => rel.contact_id === contact.id
+        );
+
+        // Add contact to each of its categories
+        contactCategories.forEach((relation: any) => {
+          const categoryId = relation.category_id;
+          if (transformedContacts[categoryId as keyof ContactsState]) {
+            transformedContacts[categoryId as keyof ContactsState].push(baseContact);
           }
         });
       });
