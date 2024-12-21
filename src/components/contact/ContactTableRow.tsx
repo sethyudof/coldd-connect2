@@ -1,6 +1,6 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Check, X } from "lucide-react";
+import { Pencil, Check, X, CircleSlash } from "lucide-react";
 import { ContactEditForm } from "./ContactEditForm";
 import { ContactInfo } from "./ContactInfo";
 
@@ -36,21 +36,26 @@ export const ContactTableRow = ({
   return (
     <TableRow key={`${columnId}-${contact.id}`}>
       <TableCell>
-        {isEditing ? (
-          <ContactEditForm
-            editingContact={editingContact}
-            setEditingContact={setEditingContact}
-            onSave={handleSaveEdit}
-            onCancel={handleCancelEdit}
-          />
-        ) : (
-          <ContactInfo
-            name={contact.name}
-            email={contact.email}
-            phone={contact.phone}
-            image={contact.image}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {contactCategories.length === 0 && (
+            <CircleSlash className="h-4 w-4 text-red-500" />
+          )}
+          {isEditing ? (
+            <ContactEditForm
+              editingContact={editingContact}
+              setEditingContact={setEditingContact}
+              onSave={handleSaveEdit}
+              onCancel={handleCancelEdit}
+            />
+          ) : (
+            <ContactInfo
+              name={contact.name}
+              email={contact.email}
+              phone={contact.phone}
+              image={contact.image}
+            />
+          )}
+        </div>
       </TableCell>
       <TableCell>
         <div className="flex flex-wrap gap-2">
@@ -66,7 +71,7 @@ export const ContactTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        {!isEditing && (
+        {!isEditing && contact.reminderInterval && (
           <div>
             Every {contact.reminderInterval} {contact.reminderUnit}
           </div>

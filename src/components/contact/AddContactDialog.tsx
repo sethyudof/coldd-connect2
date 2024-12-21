@@ -13,15 +13,16 @@ import { PlusCircle, Upload } from "lucide-react";
 import { useState } from "react";
 import { parseVCF } from "@/utils/vcfParser";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AddContactDialogProps {
   onAddContact: (contact: {
     name: string;
     email: string;
     phone: string;
-    category: string;
-    reminderInterval: string;
-    reminderUnit: 'days' | 'weeks' | 'months' | 'years';
+    category?: string;
+    reminderInterval?: string;
+    reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
   }) => void;
   categories: Record<string, { title: string; color: string }>;
 }
@@ -33,13 +34,48 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
     name: "",
     email: "",
     phone: "",
-    category: "coffee",
+    category: "",
     reminderInterval: "1",
     reminderUnit: "months" as 'days' | 'weeks' | 'months' | 'years',
   });
 
-  const handleAddContact = () => {
+  const handleAddContact = async () => {
     if (!newContact.name.trim()) return;
+    
+    // Insert contact into database
+    const { data: contactData, error: contactError } = await supabase
+      .from('contacts')
+      .insert([{
+        name: newContact.name,
+        email: newContact.email,
+        phone: newContact.phone,
+      }])
+      .select()
+      .single();
+
+    if (contactError) {
+      console.error('Error adding contact:', contactError);
+      toast({
+        title: "Error",
+        description: "Failed to add contact",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Only add category relation if a category was selected
+    if (newContact.category && contactData) {
+      const { error: categoryError } = await supabase
+        .from('contact_categories')
+        .insert([{
+          contact_id: contactData.id,
+          category_id: newContact.category,
+        }]);
+
+      if (categoryError) {
+        console.error('Error adding category relation:', categoryError);
+      }
+    }
     
     onAddContact(newContact);
     
@@ -47,12 +83,12 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
       name: "",
       email: "",
       phone: "",
-      category: "coffee",
+      category: "",
       reminderInterval: "1",
       reminderUnit: "months",
     });
     
-    setOpen(false); // Close dialog after adding contact
+    setOpen(false);
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,39 +100,28 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
       const vcfContacts = await parseVCF(file);
       
       if (vcfContacts.length > 0) {
-        // If multiple contacts, add them all and close dialog
-        if (vcfContacts.length > 1) {
-          vcfContacts.forEach(contact => {
-            if (contact.name) {
-              onAddContact({
+        // Add all contacts to the database without categories
+        for (const contact of vcfContacts) {
+          if (contact.name) {
+            const { error } = await supabase
+              .from('contacts')
+              .insert([{
                 name: contact.name,
-                email: contact.email || '',
-                phone: contact.phone || '',
-                category: newContact.category,
-                reminderInterval: newContact.reminderInterval,
-                reminderUnit: newContact.reminderUnit,
-              });
+                email: contact.email,
+                phone: contact.phone,
+              }]);
+
+            if (error) {
+              console.error('Error adding contact:', error);
             }
-          });
-          setOpen(false);
-          toast({
-            title: "Contacts imported",
-            description: `${vcfContacts.length} contacts successfully imported`,
-          });
-        } else {
-          // Single contact - populate form
-          const contact = vcfContacts[0];
-          setNewContact(prev => ({
-            ...prev,
-            name: contact.name || '',
-            email: contact.email || '',
-            phone: contact.phone || '',
-          }));
-          toast({
-            title: "Contact imported",
-            description: "VCF file successfully imported",
-          });
+          }
         }
+
+        setOpen(false);
+        toast({
+          title: "Contacts imported",
+          description: `${vcfContacts.length} contacts successfully imported`,
+        });
       } else {
         toast({
           title: "Import failed",
@@ -177,7 +202,7 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">Category (optional)</Label>
             <Select
               value={newContact.category}
               onValueChange={(value) => setNewContact(prev => ({ ...prev, category: value }))}
@@ -191,37 +216,6 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="flex gap-4">
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="interval">Reminder Interval</Label>
-              <Input
-                id="interval"
-                type="number"
-                min="1"
-                value={newContact.reminderInterval}
-                onChange={(e) => setNewContact(prev => ({ ...prev, reminderInterval: e.target.value }))}
-              />
-            </div>
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="unit">Unit</Label>
-              <Select
-                value={newContact.reminderUnit}
-                onValueChange={(value: 'days' | 'weeks' | 'months' | 'years') => 
-                  setNewContact(prev => ({ ...prev, reminderUnit: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="days">Days</SelectItem>
-                  <SelectItem value="weeks">Weeks</SelectItem>
-                  <SelectItem value="months">Months</SelectItem>
-                  <SelectItem value="years">Years</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
           <Button onClick={handleAddContact} className="w-full">
             Add Contact
