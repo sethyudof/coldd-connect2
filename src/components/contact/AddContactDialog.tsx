@@ -9,8 +9,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Upload } from "lucide-react";
 import { useState } from "react";
+import { parseVCF } from "@/utils/vcfParser";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddContactDialogProps {
   onAddContact: (contact: {
@@ -25,6 +27,7 @@ interface AddContactDialogProps {
 }
 
 export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogProps) => {
+  const { toast } = useToast();
   const [newContact, setNewContact] = useState({
     name: "",
     email: "",
@@ -49,6 +52,43 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
     });
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      console.log('Processing VCF file:', file.name);
+      const vcfContact = await parseVCF(file);
+      
+      if (vcfContact.name) {
+        setNewContact(prev => ({
+          ...prev,
+          name: vcfContact.name || '',
+          email: vcfContact.email || '',
+          phone: vcfContact.phone || '',
+        }));
+        
+        toast({
+          title: "Contact imported",
+          description: "VCF file successfully imported",
+        });
+      } else {
+        toast({
+          title: "Import failed",
+          description: "Could not find contact information in the VCF file",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error processing VCF file:', error);
+      toast({
+        title: "Import failed",
+        description: "Error processing VCF file",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -62,6 +102,26 @@ export const AddContactDialog = ({ onAddContact, categories }: AddContactDialogP
           <DialogTitle>Add New Contact</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="vcf-upload">Import VCF File (Optional)</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="vcf-upload"
+                type="file"
+                accept=".vcf"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <Button
+                variant="outline"
+                onClick={() => document.getElementById('vcf-upload')?.click()}
+                className="w-full"
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload VCF File
+              </Button>
+            </div>
+          </div>
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
