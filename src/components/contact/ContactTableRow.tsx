@@ -2,6 +2,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Check, X } from "lucide-react";
 import { ContactEditForm } from "./ContactEditForm";
+import { ContactInfo } from "./ContactInfo";
 
 interface ContactTableRowProps {
   contact: any;
@@ -39,15 +40,12 @@ export const ContactTableRow = ({
             onCancel={handleCancelEdit}
           />
         ) : (
-          contact.name
-        )}
-      </TableCell>
-      <TableCell>
-        {!isEditing && (
-          <>
-            {contact.email && <div>{contact.email}</div>}
-            {contact.phone && <div>{contact.phone}</div>}
-          </>
+          <ContactInfo
+            name={contact.name}
+            email={contact.email}
+            phone={contact.phone}
+            image={contact.image}
+          />
         )}
       </TableCell>
       <TableCell>
