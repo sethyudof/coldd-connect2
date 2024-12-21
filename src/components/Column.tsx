@@ -55,7 +55,7 @@ export const Column = ({
 
   return (
     <div className="w-80 mx-2 h-full">
-      <div className="fixed w-80">
+      <div className="fixed w-80 z-50">
         <div 
           className="flex justify-between items-center pb-4 w-full"
           style={{ 
