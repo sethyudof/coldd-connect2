@@ -1,10 +1,12 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Pencil, Check, X, CircleSlash, Trash2 } from "lucide-react";
+import { CircleSlash } from "lucide-react";
 import { ContactEditForm } from "./ContactEditForm";
 import { ContactInfo } from "./ContactInfo";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ContactCategories } from "./list/ContactCategories";
+import { ContactReminder } from "./list/ContactReminder";
+import { ContactActions } from "./list/ContactActions";
 
 interface ContactTableRowProps {
   contact: any;
@@ -26,21 +28,20 @@ interface ContactTableRowProps {
 export const ContactTableRow = ({
   contact,
   columnId,
-  categories,
   editingContact,
   handleStartEdit,
   handleSaveEdit,
   handleCancelEdit,
-  setEditingContact,
   contactCategories,
   onDelete
 }: ContactTableRowProps) => {
   const isEditing = editingContact?.contactId === contact.id;
   const { toast } = useToast();
 
+  console.log('Contact categories for', contact.name, ':', contactCategories);
+
   const handleDelete = async () => {
     try {
-      // Delete from contact_categories first due to foreign key constraint
       const { error: categoryError } = await supabase
         .from('contact_categories')
         .delete()
@@ -48,7 +49,6 @@ export const ContactTableRow = ({
 
       if (categoryError) throw categoryError;
 
-      // Then delete the contact
       const { error: contactError } = await supabase
         .from('contacts')
         .delete()
@@ -96,67 +96,22 @@ export const ContactTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        <div className="flex flex-wrap gap-2">
-          {contactCategories.map((category) => (
-            <div
-              key={category.id}
-              className="px-2 py-1 rounded text-white text-sm inline-block"
-              style={{ backgroundColor: category.color }}
-            >
-              {category.title}
-            </div>
-          ))}
-        </div>
+        <ContactCategories categories={contactCategories} />
       </TableCell>
       <TableCell>
-        {!isEditing && contact.reminderInterval && (
-          <div className="text-sm text-gray-600">
-            Every {contact.reminderInterval} {contact.reminderUnit}
-          </div>
-        )}
+        <ContactReminder
+          interval={contact.reminderInterval}
+          unit={contact.reminderUnit}
+        />
       </TableCell>
       <TableCell>
-        <div className="flex space-x-2">
-          {isEditing ? (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSaveEdit}
-                className="h-8 w-8"
-              >
-                <Check className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCancelEdit}
-                className="h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleStartEdit(columnId, contact)}
-                className="h-8 w-8"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDelete}
-                className="h-8 w-8 text-red-500 hover:text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-        </div>
+        <ContactActions
+          isEditing={isEditing}
+          onSave={handleSaveEdit}
+          onCancel={handleCancelEdit}
+          onEdit={() => handleStartEdit(columnId, contact)}
+          onDelete={handleDelete}
+        />
       </TableCell>
     </TableRow>
   );
