@@ -5,6 +5,7 @@ import { Upload } from "lucide-react";
 import { parseVCF } from "@/utils/vcfParser";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface VcfImportProps {
   onSuccess: () => void;
@@ -12,6 +13,7 @@ interface VcfImportProps {
 
 export const VcfImport = ({ onSuccess }: VcfImportProps) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -37,6 +39,9 @@ export const VcfImport = ({ onSuccess }: VcfImportProps) => {
             }
           }
         }
+
+        // Invalidate the contacts query to trigger a refresh
+        queryClient.invalidateQueries({ queryKey: ['contacts'] });
 
         onSuccess();
         toast({
