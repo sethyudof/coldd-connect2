@@ -1,6 +1,6 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { Pencil, Check, X } from "lucide-react";
 import { ContactEditForm } from "./ContactEditForm";
 
 interface ContactTableRowProps {
