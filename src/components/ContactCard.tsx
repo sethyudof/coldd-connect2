@@ -20,6 +20,8 @@ interface ContactCardProps {
     reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
     nextReminder?: Date;
     startDate?: Date;
+    notificationsEnabled?: boolean;
+    notificationPhone?: string;
   };
   index: number;
   onUpdate?: (id: string, updates: Partial<ContactCardProps['contact']>) => void;
@@ -30,6 +32,8 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
   const [interval, setInterval] = useState(contact.reminderInterval?.toString() || "");
   const [unit, setUnit] = useState<'days' | 'weeks' | 'months' | 'years'>(contact.reminderUnit || 'months');
   const [date, setDate] = useState<Date | undefined>(contact.startDate || new Date());
+  const [notificationsEnabled, setNotificationsEnabled] = useState(contact.notificationsEnabled || false);
+  const [notificationPhone, setNotificationPhone] = useState(contact.notificationPhone || '');
 
   const calculateProgress = () => {
     console.log("Calculating progress for:", contact.name);
@@ -77,6 +81,8 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
         reminderInterval: parseInt(interval),
         reminderUnit: unit,
         startDate: date,
+        notificationsEnabled,
+        notificationPhone: notificationsEnabled ? notificationPhone : null,
       });
     }
     setIsEditing(false);
@@ -86,6 +92,8 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
     setInterval(contact.reminderInterval?.toString() || "");
     setUnit(contact.reminderUnit || 'months');
     setDate(contact.startDate || new Date());
+    setNotificationsEnabled(contact.notificationsEnabled || false);
+    setNotificationPhone(contact.notificationPhone || '');
     setIsEditing(false);
   };
 
@@ -163,9 +171,13 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
                 interval={interval}
                 unit={unit}
                 date={date}
+                notificationsEnabled={notificationsEnabled}
+                notificationPhone={notificationPhone}
                 onIntervalChange={setInterval}
                 onUnitChange={setUnit}
                 onDateChange={setDate}
+                onNotificationsEnabledChange={setNotificationsEnabled}
+                onNotificationPhoneChange={setNotificationPhone}
                 onSave={handleSave}
                 onCancel={handleCancel}
               />

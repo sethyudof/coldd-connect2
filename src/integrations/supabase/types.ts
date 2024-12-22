@@ -64,6 +64,8 @@ export type Database = {
           id: string
           image: string | null
           name: string
+          notification_phone: string | null
+          notifications_enabled: boolean | null
           phone: string | null
           reminder_interval: number | null
           reminder_unit: string | null
@@ -75,6 +77,8 @@ export type Database = {
           id?: string
           image?: string | null
           name: string
+          notification_phone?: string | null
+          notifications_enabled?: boolean | null
           phone?: string | null
           reminder_interval?: number | null
           reminder_unit?: string | null
@@ -86,6 +90,8 @@ export type Database = {
           id?: string
           image?: string | null
           name?: string
+          notification_phone?: string | null
+          notifications_enabled?: boolean | null
           phone?: string | null
           reminder_interval?: number | null
           reminder_unit?: string | null
