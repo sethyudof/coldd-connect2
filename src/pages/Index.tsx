@@ -209,14 +209,16 @@ const Index = () => {
         </div>
       </div>
       
-      <div className="max-w-7xl mx-auto px-8 pt-24">
-        <ColumnsContainer
-          contacts={contacts}
-          categories={COLDD_COLUMNS}
-          allContacts={allContacts}
-          onUpdateContacts={setContacts}
-          onUpdateContact={handleUpdateContact}
-        />
+      <div className="pt-20 pb-4 px-8">
+        <div className="h-[calc(100vh-6rem)] flex">
+          <ColumnsContainer
+            contacts={contacts}
+            categories={COLDD_COLUMNS}
+            allContacts={allContacts}
+            onUpdateContacts={setContacts}
+            onUpdateContact={handleUpdateContact}
+          />
+        </div>
       </div>
     </div>
   );
