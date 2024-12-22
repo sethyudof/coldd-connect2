@@ -95,8 +95,8 @@ export const Column = ({
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 h-full relative">
-      <div className="sticky top-16 z-50 bg-background">
+    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2">
+      <div className="sticky top-16 z-50 bg-background/80 backdrop-blur-sm">
         <ColumnHeader
           title={title}
           color={color}
@@ -106,7 +106,7 @@ export const Column = ({
           onAddContact={handleAddContact}
         />
       </div>
-      <div className="mt-16">
+      <div>
         <Droppable droppableId={id}>
           {(provided) => (
             <div
