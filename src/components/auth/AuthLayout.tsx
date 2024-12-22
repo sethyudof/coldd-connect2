@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
@@ -22,6 +23,13 @@ export const AuthLayout = () => {
       }
     });
   }, [navigate]);
+
+  const handleAuthError = (error: any) => {
+    console.error("Auth error:", error);
+    toast.error("Authentication Error", {
+      description: error.message || "An unexpected error occurred during authentication"
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -47,9 +55,6 @@ export const AuthLayout = () => {
           }}
           providers={[]}
           redirectTo={window.location.origin}
-          onError={(error) => {
-            console.error("Auth error:", error);
-          }}
         />
       </Card>
     </div>
