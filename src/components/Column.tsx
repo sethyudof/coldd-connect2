@@ -95,38 +95,42 @@ export const Column = ({
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2">
-      <div className="sticky top-0 z-50 pt-16 pb-4 bg-background/80 backdrop-blur-sm">
-        <ColumnHeader
-          title={title}
-          color={color}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          availableContacts={availableContacts}
-          onAddContact={handleAddContact}
-        />
+    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 flex flex-col">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
+        <div className="max-w-7xl mx-auto px-8 py-4">
+          <ColumnHeader
+            title={title}
+            color={color}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            availableContacts={availableContacts}
+            onAddContact={handleAddContact}
+          />
+        </div>
       </div>
-      <Droppable droppableId={id}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="min-h-[calc(100vh-8rem)]"
-          >
-            <Card className="p-2 bg-gray-50 dark:bg-gray-800">
-              {contacts.map((contact, index) => (
-                <ContactCard 
-                  key={contact.id} 
-                  contact={contact} 
-                  index={index}
-                  onUpdate={onUpdateContact}
-                />
-              ))}
-              {provided.placeholder}
-            </Card>
-          </div>
-        )}
-      </Droppable>
+      <div className="mt-20">
+        <Droppable droppableId={id}>
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="min-h-[calc(100vh-8rem)]"
+            >
+              <Card className="p-2 bg-gray-50 dark:bg-gray-800">
+                {contacts.map((contact, index) => (
+                  <ContactCard 
+                    key={contact.id} 
+                    contact={contact} 
+                    index={index}
+                    onUpdate={onUpdateContact}
+                  />
+                ))}
+                {provided.placeholder}
+              </Card>
+            </div>
+          )}
+        </Droppable>
+      </div>
     </div>
   );
 };

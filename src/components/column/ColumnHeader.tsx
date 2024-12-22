@@ -23,13 +23,13 @@ export const ColumnHeader = ({
 }: ColumnHeaderProps) => {
   return (
     <div 
-      className="w-full bg-background/80 backdrop-blur-sm"
+      className="w-full"
       style={{ 
         backgroundColor: `${color}80`,
         backdropFilter: 'blur(8px)',
       }}
     >
-      <div className="flex justify-between items-center pb-4 w-full px-4">
+      <div className="flex justify-between items-center w-full px-4 py-2">
         <h2 className="font-semibold text-white">
           {title}
         </h2>
