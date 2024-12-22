@@ -8,6 +8,7 @@ import { LogOut, Moon, Sun } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { Toggle } from "@/components/ui/toggle";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -28,8 +29,14 @@ const initialContacts: ContactsState = {
 const Index = () => {
   const [contacts, setContacts] = useState<ContactsState>(initialContacts);
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
+  const [isDark, setIsDark] = useState(true); // Default to dark mode
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Initialize dark mode
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -104,12 +111,13 @@ const Index = () => {
 
   const toggleTheme = () => {
     const html = document.documentElement;
-    const isDark = html.classList.contains("dark");
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
     
-    if (isDark) {
-      html.classList.remove("dark");
-    } else {
+    if (newIsDark) {
       html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
     }
   };
 
@@ -173,16 +181,18 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">COLDD Contact</h1>
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
+              <Toggle
+                pressed={isDark}
+                onPressedChange={toggleTheme}
+                aria-label="Toggle dark mode"
                 className="h-9 w-9"
               >
-                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                <span className="sr-only">Toggle theme</span>
-              </Button>
+                {isDark ? (
+                  <Moon className="h-4 w-4" />
+                ) : (
+                  <Sun className="h-4 w-4" />
+                )}
+              </Toggle>
               <AddContactDialog 
                 onAddContact={handleAddContact}
                 categories={COLDD_COLUMNS}
