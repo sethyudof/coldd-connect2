@@ -103,16 +103,16 @@ export const Column = ({
         setIsOpen={setIsOpen}
         availableContacts={availableContacts}
         onAddContact={handleAddContact}
-        className="mb-2"
+        className="mb-2 flex-shrink-0"
       />
       <Droppable droppableId={id}>
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="flex-1 overflow-y-auto"
+            className="flex-1 overflow-y-auto min-h-0"
           >
-            <Card className="p-2 bg-gray-50 dark:bg-gray-800">
+            <Card className="p-2 bg-gray-50 dark:bg-gray-800 h-full">
               {contacts.map((contact, index) => (
                 <ContactCard 
                   key={contact.id} 
