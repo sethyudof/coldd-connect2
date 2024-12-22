@@ -95,24 +95,25 @@ export const Column = ({
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2">
-      <ColumnHeader
-        title={title}
-        color={color}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        availableContacts={availableContacts}
-        onAddContact={handleAddContact}
-        className="sticky top-[72px] z-10"
-      />
+    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 flex flex-col h-[calc(100vh-6rem)]">
+      <div className="sticky top-[72px] z-10 bg-background">
+        <ColumnHeader
+          title={title}
+          color={color}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          availableContacts={availableContacts}
+          onAddContact={handleAddContact}
+        />
+      </div>
       <Droppable droppableId={id}>
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="mt-2"
+            className="flex-1 overflow-y-auto mt-2"
           >
-            <Card className="p-2 bg-gray-50 dark:bg-gray-800 min-h-[calc(100vh-8rem)]">
+            <Card className="p-2 bg-gray-50 dark:bg-gray-800 min-h-full">
               {contacts.map((contact, index) => (
                 <ContactCard 
                   key={contact.id} 
