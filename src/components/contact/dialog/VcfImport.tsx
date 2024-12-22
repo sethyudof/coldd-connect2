@@ -24,6 +24,12 @@ export const VcfImport = ({ onSuccess }: VcfImportProps) => {
       const vcfContacts = await parseVCF(file);
       console.log('Parsed contacts:', vcfContacts);
       
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('No authenticated user found');
+      }
+      
       if (vcfContacts.length > 0) {
         for (const contact of vcfContacts) {
           if (contact.name) {
@@ -34,6 +40,7 @@ export const VcfImport = ({ onSuccess }: VcfImportProps) => {
                 name: contact.name,
                 email: contact.email,
                 phone: contact.phone,
+                user_id: user.id  // Set the user_id when creating the contact
               }])
               .select();
 
