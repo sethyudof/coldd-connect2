@@ -12,6 +12,7 @@ export interface Contact {
   reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
   nextReminder?: Date;
   startDate?: Date;
+  user_id?: string;  // Added this field to match the database schema
 }
 
 export type ContactsState = {
