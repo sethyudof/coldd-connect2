@@ -96,19 +96,17 @@ export const Column = ({
 
   return (
     <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 flex flex-col">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background">
-        <div className="max-w-7xl mx-auto px-8 py-4">
-          <ColumnHeader
-            title={title}
-            color={color}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            availableContacts={availableContacts}
-            onAddContact={handleAddContact}
-          />
-        </div>
+      <div className="sticky top-0 z-50 bg-background">
+        <ColumnHeader
+          title={title}
+          color={color}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          availableContacts={availableContacts}
+          onAddContact={handleAddContact}
+        />
       </div>
-      <div className="mt-20">
+      <div className="mt-4">
         <Droppable droppableId={id}>
           {(provided) => (
             <div
