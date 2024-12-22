@@ -1,13 +1,15 @@
 import { Card } from "@/components/ui/card";
-import { Clock, Edit2 } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { Draggable } from "@hello-pangea/dnd";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { addDays, addWeeks, addMonths, addYears, differenceInMilliseconds } from "date-fns";
 import { ContactProgressBar } from "./contact/ContactProgressBar";
 import { ContactActions } from "./contact/ContactActions";
 import { ContactInfo } from "./contact/ContactInfo";
-import { ReminderEditor } from "./contact/ReminderEditor";
+import { ReminderDisplay } from "./contact/reminder/ReminderDisplay";
+import { ReminderEditMode } from "./contact/reminder/ReminderEditMode";
+import { useReminderCalculation } from "@/hooks/useReminderCalculation";
+import { addDays, addWeeks, addMonths, addYears } from "date-fns";
 
 interface ContactCardProps {
   contact: {
@@ -27,14 +29,6 @@ interface ContactCardProps {
   onUpdate?: (id: string, updates: Partial<ContactCardProps['contact']>) => void;
 }
 
-const getPluralizedUnit = (interval: number, unit: string): string => {
-  if (interval === 1) {
-    // Remove 's' from the end of the unit for singular form
-    return unit.endsWith('s') ? unit.slice(0, -1) : unit;
-  }
-  return unit;
-};
-
 export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [interval, setInterval] = useState(contact.reminderInterval?.toString() || "");
@@ -43,45 +37,7 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(contact.notificationsEnabled || false);
   const [notificationPhone, setNotificationPhone] = useState(contact.notificationPhone || '');
 
-  const calculateProgress = () => {
-    console.log("Calculating progress for:", contact.name);
-    console.log("Start date:", contact.startDate);
-    console.log("Reminder interval:", contact.reminderInterval);
-    console.log("Reminder unit:", contact.reminderUnit);
-    
-    if (!contact.startDate || !contact.reminderInterval) {
-      console.log("Missing required data, returning 0");
-      return 0;
-    }
-
-    const now = new Date();
-    let nextDate;
-    
-    switch (contact.reminderUnit) {
-      case 'days':
-        nextDate = addDays(new Date(contact.startDate), contact.reminderInterval);
-        break;
-      case 'weeks':
-        nextDate = addWeeks(new Date(contact.startDate), contact.reminderInterval);
-        break;
-      case 'years':
-        nextDate = addYears(new Date(contact.startDate), contact.reminderInterval);
-        break;
-      case 'months':
-      default:
-        nextDate = addMonths(new Date(contact.startDate), contact.reminderInterval);
-    }
-
-    const totalDuration = differenceInMilliseconds(nextDate, new Date(contact.startDate));
-    const elapsed = differenceInMilliseconds(now, new Date(contact.startDate));
-    
-    const progress = (elapsed / totalDuration) * 100;
-    console.log("Total duration:", totalDuration);
-    console.log("Elapsed time:", elapsed);
-    console.log("Calculated progress:", progress);
-    
-    return Math.min(Math.max(progress, 0), 100);
-  };
+  const { calculateProgress } = useReminderCalculation(contact);
 
   const handleSave = () => {
     if (onUpdate) {
@@ -155,14 +111,10 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
             
             {!isEditing ? (
               <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center text-sm text-gray-500">
-                  {contact.reminderInterval && (
-                    <>
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span>Every {contact.reminderInterval} {getPluralizedUnit(contact.reminderInterval, contact.reminderUnit || 'months')}</span>
-                    </>
-                  )}
-                </div>
+                <ReminderDisplay
+                  interval={contact.reminderInterval}
+                  unit={contact.reminderUnit}
+                />
                 <Button
                   variant="ghost"
                   size="sm"
@@ -175,7 +127,7 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
                 </Button>
               </div>
             ) : (
-              <ReminderEditor
+              <ReminderEditMode
                 interval={interval}
                 unit={unit}
                 date={date}
