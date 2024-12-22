@@ -96,7 +96,7 @@ export const Column = ({
 
   return (
     <div className="flex-1 min-w-[280px] max-w-[400px] mx-2">
-      <div className="sticky top-16 z-50 bg-background/80 backdrop-blur-sm">
+      <div className="sticky top-0 z-50 pt-16 pb-4 bg-background/80 backdrop-blur-sm">
         <ColumnHeader
           title={title}
           color={color}
@@ -106,29 +106,27 @@ export const Column = ({
           onAddContact={handleAddContact}
         />
       </div>
-      <div>
-        <Droppable droppableId={id}>
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="min-h-[calc(100vh-8rem)]"
-            >
-              <Card className="p-2 bg-gray-50 dark:bg-gray-800">
-                {contacts.map((contact, index) => (
-                  <ContactCard 
-                    key={contact.id} 
-                    contact={contact} 
-                    index={index}
-                    onUpdate={onUpdateContact}
-                  />
-                ))}
-                {provided.placeholder}
-              </Card>
-            </div>
-          )}
-        </Droppable>
-      </div>
+      <Droppable droppableId={id}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="min-h-[calc(100vh-8rem)]"
+          >
+            <Card className="p-2 bg-gray-50 dark:bg-gray-800">
+              {contacts.map((contact, index) => (
+                <ContactCard 
+                  key={contact.id} 
+                  contact={contact} 
+                  index={index}
+                  onUpdate={onUpdateContact}
+                />
+              ))}
+              {provided.placeholder}
+            </Card>
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 };
