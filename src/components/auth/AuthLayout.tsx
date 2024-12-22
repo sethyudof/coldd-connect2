@@ -9,7 +9,14 @@ export const AuthLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Log the current session for debugging
+    console.log("Checking auth state...");
+    supabase.auth.getSession().then(({ data: { session }}) => {
+      console.log("Current session:", session);
+    });
+
     supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session);
       if (event === "SIGNED_IN" && session) {
         navigate("/");
       }
@@ -39,6 +46,10 @@ export const AuthLayout = () => {
             }
           }}
           providers={[]}
+          redirectTo={window.location.origin}
+          onError={(error) => {
+            console.error("Auth error:", error);
+          }}
         />
       </Card>
     </div>
