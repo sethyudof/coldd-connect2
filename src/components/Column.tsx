@@ -53,7 +53,6 @@ export const Column = ({
     try {
       console.log('Adding contact to category:', { contactId, categoryId: id });
       
-      // First create the category association
       const { error: categoryError } = await supabase
         .from('contact_categories')
         .insert([{
@@ -63,7 +62,6 @@ export const Column = ({
 
       if (categoryError) throw categoryError;
 
-      // Then update the contact with default reminder settings
       const { error: contactError } = await supabase
         .from('contacts')
         .update({
@@ -75,7 +73,6 @@ export const Column = ({
 
       if (contactError) throw contactError;
 
-      // Invalidate queries to refresh the data
       await queryClient.invalidateQueries({ queryKey: ['contacts'] });
       
       if (onAddContact) {
@@ -99,7 +96,7 @@ export const Column = ({
 
   return (
     <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 h-full">
-      <div className="fixed top-16 left-auto right-auto z-50 min-w-[280px] max-w-[400px]">
+      <div className="sticky top-16 z-50">
         <ColumnHeader
           title={title}
           color={color}
