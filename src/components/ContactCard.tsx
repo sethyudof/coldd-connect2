@@ -27,6 +27,14 @@ interface ContactCardProps {
   onUpdate?: (id: string, updates: Partial<ContactCardProps['contact']>) => void;
 }
 
+const getPluralizedUnit = (interval: number, unit: string): string => {
+  if (interval === 1) {
+    // Remove 's' from the end of the unit for singular form
+    return unit.endsWith('s') ? unit.slice(0, -1) : unit;
+  }
+  return unit;
+};
+
 export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [interval, setInterval] = useState(contact.reminderInterval?.toString() || "");
@@ -151,7 +159,7 @@ export const ContactCard = ({ contact, index, onUpdate }: ContactCardProps) => {
                   {contact.reminderInterval && (
                     <>
                       <Clock className="w-4 h-4 mr-1" />
-                      <span>Every {contact.reminderInterval} {contact.reminderUnit || 'months'}</span>
+                      <span>Every {contact.reminderInterval} {getPluralizedUnit(contact.reminderInterval, contact.reminderUnit || 'months')}</span>
                     </>
                   )}
                 </div>
