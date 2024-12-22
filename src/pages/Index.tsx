@@ -210,7 +210,7 @@ const Index = () => {
       </div>
       
       <div className="pt-20 pb-4 px-8">
-        <div className="h-[calc(100vh-6rem)] flex">
+        <div className="h-[calc(100vh-6rem)] overflow-x-auto">
           <ColumnsContainer
             contacts={contacts}
             categories={COLDD_COLUMNS}

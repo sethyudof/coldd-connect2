@@ -101,7 +101,7 @@ export const ColumnsContainer = ({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex overflow-x-auto pb-4">
+      <div className="flex overflow-x-auto overflow-y-hidden h-full">
         {Object.entries(categories).map(([id, { title, color }]) => (
           <Column
             key={id}
