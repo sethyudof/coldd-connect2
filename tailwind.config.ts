@@ -79,7 +79,19 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      textShadow: {
+        DEFAULT: '0 1px 2px rgba(0, 0, 0, 0.2)',
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function({ addUtilities }: { addUtilities: Function }) {
+      addUtilities({
+        '.text-shadow': {
+          'text-shadow': '0 1px 2px rgba(0, 0, 0, 0.2)',
+        },
+      });
+    },
+  ],
 } satisfies Config;
