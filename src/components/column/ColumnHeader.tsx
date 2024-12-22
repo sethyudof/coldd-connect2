@@ -36,22 +36,24 @@ export const ColumnHeader = ({
   const rgb = hexToRgb(color);
   const gradientStyle = rgb ? {
     background: `linear-gradient(135deg, 
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.95) 0%,
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.85) 50%,
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.75) 100%)`,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.8) 0%,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.7) 50%,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.6) 100%)`,
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
     boxShadow: `
-      inset 0 2px 4px rgba(255,255,255,0.3),
-      inset 0 -2px 4px rgba(0,0,0,0.2),
-      0 2px 8px rgba(0,0,0,0.1)
+      inset 0 2px 4px rgba(255,255,255,0.2),
+      inset 0 -2px 4px rgba(0,0,0,0.1),
+      0 2px 8px rgba(0,0,0,0.05)
     `,
   } : {};
 
   return (
     <div 
-      className={`w-full rounded-t-lg backdrop-blur-sm ${className}`}
+      className={`w-full rounded-t-lg ${className}`}
       style={{ 
         ...gradientStyle,
-        borderBottom: '1px solid rgba(255,255,255,0.2)',
+        borderBottom: '1px solid rgba(255,255,255,0.15)',
       }}
     >
       <div className="flex justify-between items-center w-full px-4 py-3">
