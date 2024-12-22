@@ -4,11 +4,11 @@ import { ColumnsContainer, Contact, ContactsState } from "@/components/contact/C
 import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { LogOut, Moon, Sun } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Switch } from "@/components/ui/switch";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -41,6 +41,18 @@ const Index = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
+  };
+
+  const toggleTheme = () => {
+    const html = document.documentElement;
+    const newIsDark = !isDark;
+    setIsDark(newIsDark);
+    
+    if (newIsDark) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
   };
 
   const { data: contactsData, isLoading } = useQuery({
@@ -109,18 +121,6 @@ const Index = () => {
     }
   }, [contactsData]);
 
-  const toggleTheme = () => {
-    const html = document.documentElement;
-    const newIsDark = !isDark;
-    setIsDark(newIsDark);
-    
-    if (newIsDark) {
-      html.classList.add("dark");
-    } else {
-      html.classList.remove("dark");
-    }
-  };
-
   const handleAddContact = async (newContact: {
     name: string;
     email: string;
@@ -181,15 +181,10 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">COLDD Contact</h1>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Sun className="h-4 w-4" />
-                <Switch
-                  checked={isDark}
-                  onCheckedChange={toggleTheme}
-                  className="data-[state=checked]:bg-primary"
-                />
-                <Moon className="h-4 w-4" />
-              </div>
+              <DarkModeToggle 
+                isDark={isDark} 
+                toggleTheme={toggleTheme} 
+              />
               <AddContactDialog 
                 onAddContact={handleAddContact}
                 categories={COLDD_COLUMNS}
