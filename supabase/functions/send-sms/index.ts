@@ -63,7 +63,7 @@ serve(async (req) => {
 
     // Send SMS for each due reminder
     for (const contact of remindersToSend) {
-      const message = `Reminder: It's time to connect with ${contact.name}!`;
+      const message = `Reminder: It's time to connect with ${contact.name}! Reply to this message to snooze the reminder (e.g., "snooze for 2 weeks" or "remind me next month")`;
       
       const twilioResponse = await fetch(
         `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
