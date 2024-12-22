@@ -8,7 +8,7 @@ import { LogOut, Moon, Sun } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Toggle } from "@/components/ui/toggle";
+import { Switch } from "@/components/ui/switch";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -181,18 +181,15 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">COLDD Contact</h1>
             <div className="flex items-center gap-4">
-              <Toggle
-                pressed={isDark}
-                onPressedChange={toggleTheme}
-                aria-label="Toggle dark mode"
-                className="h-9 w-9"
-              >
-                {isDark ? (
-                  <Moon className="h-4 w-4" />
-                ) : (
-                  <Sun className="h-4 w-4" />
-                )}
-              </Toggle>
+              <div className="flex items-center gap-2">
+                <Sun className="h-4 w-4" />
+                <Switch
+                  checked={isDark}
+                  onCheckedChange={toggleTheme}
+                  className="data-[state=checked]:bg-primary"
+                />
+                <Moon className="h-4 w-4" />
+              </div>
               <AddContactDialog 
                 onAddContact={handleAddContact}
                 categories={COLDD_COLUMNS}
