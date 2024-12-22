@@ -70,6 +70,7 @@ export type Database = {
           reminder_interval: number | null
           reminder_unit: string | null
           start_date: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -83,6 +84,7 @@ export type Database = {
           reminder_interval?: number | null
           reminder_unit?: string | null
           start_date?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -96,6 +98,7 @@ export type Database = {
           reminder_interval?: number | null
           reminder_unit?: string | null
           start_date?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

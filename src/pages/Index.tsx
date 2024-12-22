@@ -4,9 +4,10 @@ import { ColumnsContainer, Contact, ContactsState } from "@/components/contact/C
 import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -28,22 +29,29 @@ const Index = () => {
   const [contacts, setContacts] = useState<ContactsState>(initialContacts);
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // Fetch all contacts and their categories
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
   const { data: contactsData, isLoading } = useQuery({
     queryKey: ['contacts'],
     queryFn: async () => {
-      console.log('Fetching contacts and categories...');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user found');
+
+      console.log('Fetching contacts for user:', user.id);
       
-      // First, fetch all contacts
       const { data: contacts, error: contactsError } = await supabase
         .from('contacts')
-        .select('*');
+        .select('*')
+        .eq('user_id', user.id);
       
       if (contactsError) throw contactsError;
       console.log('Fetched contacts:', contacts);
 
-      // Then, fetch all contact-category relationships
       const { data: categoryRelations, error: categoriesError } = await supabase
         .from('contact_categories')
         .select('*');
@@ -59,7 +67,6 @@ const Index = () => {
     if (contactsData) {
       const { contacts: fetchedContacts, categoryRelations } = contactsData;
       
-      // Transform all contacts into the format expected by the UI
       const allContactsList = fetchedContacts.map((contact: any) => ({
         id: contact.id,
         name: contact.name,
@@ -73,10 +80,8 @@ const Index = () => {
 
       console.log('Transformed all contacts:', allContactsList);
 
-      // Set all contacts
       setAllContacts(allContactsList);
 
-      // Transform categorized contacts
       const transformedContacts: ContactsState = {
         coffee: [],
         outing: [],
@@ -85,7 +90,6 @@ const Index = () => {
         drinks: [],
       };
 
-      // Group contacts by their categories
       categoryRelations.forEach((relation: any) => {
         const contact = allContactsList.find(c => c.id === relation.contact_id);
         if (contact && transformedContacts[relation.category_id as keyof ContactsState]) {
@@ -109,7 +113,7 @@ const Index = () => {
     }
   };
 
-  const handleAddContact = (newContact: {
+  const handleAddContact = async (newContact: {
     name: string;
     email: string;
     phone: string;
@@ -117,21 +121,22 @@ const Index = () => {
     reminderInterval: string;
     reminderUnit: 'days' | 'weeks' | 'months' | 'years';
   }) => {
-    const newId = Math.random().toString(36).substr(2, 9);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     const contactToAdd: Contact = {
-      id: newId,
+      id: Math.random().toString(36).substr(2, 9),
       name: newContact.name,
       email: newContact.email,
       phone: newContact.phone,
       reminderInterval: parseInt(newContact.reminderInterval),
       reminderUnit: newContact.reminderUnit,
       startDate: new Date(),
+      user_id: user.id,
     };
 
-    // Add to allContacts
     setAllContacts(prev => [...prev, contactToAdd]);
 
-    // Add to specific category
     setContacts(prev => ({
       ...prev,
       [newContact.category]: [...prev[newContact.category as keyof ContactsState], contactToAdd],
@@ -188,6 +193,15 @@ const Index = () => {
                 categories={COLDD_COLUMNS}
                 onUpdateContact={handleUpdateContact}
               />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="h-9 w-9"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="sr-only">Logout</span>
+              </Button>
             </div>
           </div>
         </div>
