@@ -36,9 +36,9 @@ export const ColumnHeader = ({
   const rgb = hexToRgb(color);
   const gradientStyle = rgb ? {
     background: `linear-gradient(135deg, 
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.8) 0%,
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.7) 50%,
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.6) 100%)`,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.5) 0%,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.4) 50%,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.3) 100%)`,
     backdropFilter: 'blur(8px)',
     WebkitBackdropFilter: 'blur(8px)',
     boxShadow: `
