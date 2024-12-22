@@ -11,6 +11,7 @@ interface ColumnHeaderProps {
     email?: string;
   }>;
   onAddContact?: (contactId: string) => void;
+  className?: string;
 }
 
 export const ColumnHeader = ({
@@ -20,10 +21,11 @@ export const ColumnHeader = ({
   setIsOpen,
   availableContacts,
   onAddContact,
+  className = "",
 }: ColumnHeaderProps) => {
   return (
     <div 
-      className="w-full rounded-t-lg"
+      className={`w-full rounded-t-lg ${className}`}
       style={{ 
         backgroundColor: `${color}80`,
         backdropFilter: 'blur(8px)',
