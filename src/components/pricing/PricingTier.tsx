@@ -26,7 +26,7 @@ export const PricingTier = ({
         </span>
       </div>
       <Button className="w-full" onClick={onSubscribe}>
-        Start 7-day Free Trial
+        Upgrade Now
       </Button>
     </div>
   );
