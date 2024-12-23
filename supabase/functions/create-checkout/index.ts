@@ -18,18 +18,18 @@ serve(async (req) => {
   )
 
   try {
-    // Log the raw request body for debugging
-    const rawBody = await req.text();
-    console.log('Raw request body:', rawBody);
-
-    // Parse the JSON body
-    let body;
-    try {
-      body = JSON.parse(rawBody);
-    } catch (e) {
-      console.error('Failed to parse request body:', e);
-      throw new Error('Invalid JSON in request body');
+    console.log('Received request:', req.method, req.url);
+    
+    const body = await req.json();
+    console.log('Request body:', body);
+    
+    const { priceId } = body;
+    if (!priceId) {
+      console.error('No priceId in request body:', body);
+      throw new Error('No price ID provided')
     }
+
+    console.log('Processing checkout with priceId:', priceId);
 
     const authHeader = req.headers.get('Authorization')!
     const token = authHeader.replace('Bearer ', '')
@@ -40,16 +40,6 @@ serve(async (req) => {
     if (!email) {
       throw new Error('No email found')
     }
-
-    console.log('Request body:', body);
-    const { priceId } = body;
-    
-    if (!priceId) {
-      console.error('No priceId found in request body:', body);
-      throw new Error('No price ID provided')
-    }
-
-    console.log('Using priceId:', priceId);
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
