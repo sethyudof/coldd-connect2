@@ -11,6 +11,9 @@ export const AuthLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Set dark mode by default
+    document.documentElement.classList.add('dark');
+    
     console.log("Checking auth state...");
     supabase.auth.getSession().then(({ data: { session }}) => {
       console.log("Current session:", session);
@@ -59,7 +62,26 @@ export const AuthLayout = () => {
                 colors: {
                   brand: 'rgb(var(--primary))',
                   brandAccent: 'rgb(var(--primary))',
-                }
+                },
+                radii: {
+                  borderRadiusButton: '0.5rem',
+                },
+              },
+            },
+            style: {
+              button: {
+                fontSize: '14px',
+                padding: '10px 15px',
+              },
+            },
+            className: {
+              button: 'custom-button',
+            },
+          }}
+          localization={{
+            variables: {
+              sign_up: {
+                button_label: 'Start free trial'
               }
             }
           }}
