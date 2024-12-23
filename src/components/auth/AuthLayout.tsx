@@ -12,26 +12,23 @@ export const AuthLayout = () => {
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_up');
   useAuthRedirect();
 
-  // Handle auth errors through the Auth component's events
-  const handleAuthEvent = (event: any) => {
-    console.log("Auth event:", event);
-    if (event.error) {
-      const errorMessage = event.error.message || event.error.error_description || "An unexpected error occurred";
-      
-      if (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists')) {
-        console.log("User already exists, switching to sign in view");
-        toast.error("Account Already Exists", {
-          description: "Please sign in with your existing account",
-          duration: 5000,
-        });
-        setView('sign_in');
-      } else {
-        console.error("Unexpected auth error:", event.error);
-        toast.error("Authentication Error", {
-          description: errorMessage,
-          duration: 5000,
-        });
-      }
+  const handleAuthError = (error: Error) => {
+    console.error("Auth error:", error);
+    const errorMessage = error.message || "An unexpected error occurred";
+    
+    if (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists')) {
+      console.log("User already exists, switching to sign in view");
+      toast.error("Account Already Exists", {
+        description: "Please sign in with your existing account",
+        duration: 5000,
+      });
+      setView('sign_in');
+    } else {
+      console.error("Unexpected auth error:", error);
+      toast.error("Authentication Error", {
+        description: errorMessage,
+        duration: 5000,
+      });
     }
   };
 
@@ -81,7 +78,7 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
-          onAuthEvent={handleAuthEvent}
+          onError={handleAuthError}
         />
       </Card>
     </div>
