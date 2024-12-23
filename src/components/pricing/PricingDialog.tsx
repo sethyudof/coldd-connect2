@@ -40,6 +40,7 @@ export const PricingDialog = () => {
 
   const handleSubscribe = async (priceId: string) => {
     try {
+      console.log('Attempting to subscribe with priceId:', priceId);
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast({
@@ -51,10 +52,7 @@ export const PricingDialog = () => {
       }
 
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          priceId,
-          trial_period_days: 0, // Remove trial period since user is already in trial
-        },
+        body: { priceId },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },

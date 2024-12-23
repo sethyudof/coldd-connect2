@@ -28,7 +28,10 @@ serve(async (req) => {
       throw new Error('No email found')
     }
 
-    const { priceId, trial_period_days } = await req.json()
+    // Parse the request body and log it for debugging
+    const { priceId } = await req.json()
+    console.log('Received request with priceId:', priceId)
+
     if (!priceId) {
       throw new Error('No price ID provided')
     }
@@ -47,7 +50,7 @@ serve(async (req) => {
       customer_id = customers.data[0].id
     }
 
-    console.log('Creating payment session with trial period...')
+    console.log('Creating payment session...')
     const session = await stripe.checkout.sessions.create({
       customer: customer_id,
       customer_email: customer_id ? undefined : email,
@@ -58,9 +61,6 @@ serve(async (req) => {
         },
       ],
       mode: 'subscription',
-      subscription_data: {
-        trial_period_days: trial_period_days || 7,
-      },
       success_url: `${req.headers.get('origin')}/`,
       cancel_url: `${req.headers.get('origin')}/`,
     })
