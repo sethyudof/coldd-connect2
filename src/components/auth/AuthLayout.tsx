@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card } from "@/components/ui/card";
@@ -12,27 +12,34 @@ export const AuthLayout = () => {
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_up');
   useAuthRedirect();
 
-  const handleAuthEvent = (event: { error?: Error; message?: string }) => {
-    if (event.error) {
-      console.error("Auth error:", event.error);
-      const errorMessage = event.error.message || "An unexpected error occurred";
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session);
       
-      if (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists')) {
-        console.log("User already exists, switching to sign in view");
-        toast.error("Account Already Exists", {
-          description: "Please sign in with your existing account",
-          duration: 5000,
-        });
-        setView('sign_in');
-      } else {
-        console.error("Unexpected auth error:", event.error);
+      if (event === 'SIGNED_IN') {
+        console.log("User signed in successfully");
+      } else if (event === 'USER_UPDATED') {
+        console.log("User updated");
+      } else if (event === 'SIGNED_OUT') {
+        console.log("User signed out");
+      } else if (event === 'USER_DELETED') {
+        console.log("User deleted");
+      }
+
+      // Handle specific error cases
+      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
         toast.error("Authentication Error", {
-          description: errorMessage,
+          description: "Please sign in again",
           duration: 5000,
         });
       }
-    }
-  };
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -80,7 +87,6 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
-          onAuthEvent={handleAuthEvent}
         />
       </Card>
     </div>
