@@ -28,6 +28,11 @@ serve(async (req) => {
       throw new Error('No email found')
     }
 
+    const { priceId, trial_period_days } = await req.json()
+    if (!priceId) {
+      throw new Error('No price ID provided')
+    }
+
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
     })
@@ -42,17 +47,20 @@ serve(async (req) => {
       customer_id = customers.data[0].id
     }
 
-    console.log('Creating payment session...')
+    console.log('Creating payment session with trial period...')
     const session = await stripe.checkout.sessions.create({
       customer: customer_id,
       customer_email: customer_id ? undefined : email,
       line_items: [
         {
-          price: Deno.env.get('STRIPE_PRICE_ID'),
+          price: priceId,
           quantity: 1,
         },
       ],
       mode: 'subscription',
+      subscription_data: {
+        trial_period_days: trial_period_days || 7,
+      },
       success_url: `${req.headers.get('origin')}/`,
       cancel_url: `${req.headers.get('origin')}/`,
     })
