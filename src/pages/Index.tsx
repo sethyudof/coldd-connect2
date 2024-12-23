@@ -4,11 +4,12 @@ import { ColumnsContainer, Contact, ContactsState } from "@/components/contact/C
 import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, CreditCard } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { toast } from "sonner";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -29,11 +30,10 @@ const initialContacts: ContactsState = {
 const Index = () => {
   const [contacts, setContacts] = useState<ContactsState>(initialContacts);
   const [allContacts, setAllContacts] = useState<Contact[]>([]);
-  const [isDark, setIsDark] = useState(true); // Default to dark mode
+  const [isDark, setIsDark] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Initialize dark mode
   useEffect(() => {
     document.documentElement.classList.add('dark');
   }, []);
@@ -41,6 +41,38 @@ const Index = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
+  };
+
+  const handleSubscribe = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to subscribe",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout process",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleTheme = () => {
@@ -181,6 +213,14 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">COLDD Contact</h1>
             <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                onClick={handleSubscribe}
+                className="gap-2"
+              >
+                <CreditCard className="h-4 w-4" />
+                Upgrade to Pro
+              </Button>
               <DarkModeToggle 
                 isDark={isDark} 
                 toggleTheme={toggleTheme} 
