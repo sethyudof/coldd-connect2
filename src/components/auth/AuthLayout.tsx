@@ -6,6 +6,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
@@ -31,7 +32,9 @@ export const AuthLayout = () => {
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-center mb-2">COLDD Contact</h1>
+          <div className="flex justify-center mb-2">
+            <BrandLogo />
+          </div>
           <p className="text-center text-muted-foreground mb-6">
             Start your 7-day free trial today
           </p>

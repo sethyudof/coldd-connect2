@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { PricingDialog } from "@/components/pricing/PricingDialog";
-import { toast } from "sonner";
+import { BrandLogo } from "@/components/common/BrandLogo";
 
 const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
@@ -179,7 +179,7 @@ const Index = () => {
       <div className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm z-50 border-b">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold">COLDD Contact</h1>
+            <BrandLogo />
             <div className="flex items-center gap-4">
               <PricingDialog />
               <DarkModeToggle 
