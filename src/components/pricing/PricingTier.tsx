@@ -37,7 +37,7 @@ export const PricingTier = ({
         }}
         disabled={!priceId}
       >
-        {priceId ? 'Upgrade Now' : 'Price ID Not Available'}
+        {priceId ? 'Upgrade Now' : 'Contact Support'}
       </Button>
     </div>
   );
