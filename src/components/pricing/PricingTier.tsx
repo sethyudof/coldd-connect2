@@ -17,8 +17,6 @@ export const PricingTier = ({
   priceId,
   onSubscribe,
 }: PricingTierProps) => {
-  console.log(`PricingTier rendered for ${name} with priceId:`, priceId);
-  
   return (
     <div className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors">
       <h3 className="text-lg font-semibold">{name}</h3>
@@ -31,13 +29,9 @@ export const PricingTier = ({
       </div>
       <Button 
         className="w-full" 
-        onClick={() => {
-          console.log('Subscribe button clicked with priceId:', priceId);
-          onSubscribe(priceId);
-        }}
-        disabled={!priceId}
+        onClick={() => onSubscribe(priceId)}
       >
-        {priceId ? 'Upgrade Now' : 'Price configuration missing'}
+        Upgrade Now
       </Button>
     </div>
   );

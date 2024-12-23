@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreditCard } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PricingTier } from "./PricingTier";
 import { BillingIntervalToggle } from "./BillingIntervalToggle";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -13,23 +13,16 @@ export const PricingDialog = () => {
   const [open, setOpen] = useState(false);
   const { handleSubscribe } = useSubscription();
 
-  useEffect(() => {
-    // Debug log to check price IDs when component mounts
-    PRICING_TIERS.forEach(tier => {
-      console.log(`${tier.name} Monthly Price ID:`, tier.monthly.priceId);
-      console.log(`${tier.name} Annual Price ID:`, tier.annual.priceId);
-    });
-  }, []);
-
   const handleSubscription = async (priceId: string) => {
-    console.log('Handling subscription with priceId:', priceId);
-    if (!priceId) {
-      toast.error("Configuration Error", {
-        description: "Price configuration is missing. Please contact support.",
+    try {
+      console.log('Starting subscription process with priceId:', priceId);
+      await handleSubscribe(priceId);
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast.error("Subscription Error", {
+        description: "Failed to start subscription process. Please try again.",
       });
-      return;
     }
-    await handleSubscribe(priceId);
   };
 
   return (
