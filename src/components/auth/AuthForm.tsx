@@ -2,6 +2,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
+import { AuthChangeEvent } from "@supabase/supabase-js";
 
 interface AuthFormProps {
   view: 'sign_in' | 'sign_up';
@@ -14,8 +15,8 @@ export const AuthForm = ({ view, onViewChange }: AuthFormProps) => {
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'USER_SIGNED_IN') {
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
+      if (event === 'SIGNED_IN') {
         console.log("User signed in:", session?.user?.email);
       } else if (event === 'SIGNED_OUT') {
         console.log("User signed out");
