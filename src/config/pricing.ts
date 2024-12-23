@@ -32,3 +32,6 @@ console.log('Stripe Price IDs loaded:', {
   tier2Monthly: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID || 'NOT SET',
   tier2Annual: import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID || 'NOT SET'
 });
+
+// Log all environment variables for debugging
+console.log('All available env variables:', import.meta.env);
