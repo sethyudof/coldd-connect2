@@ -49,6 +49,12 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     })
 
+    // Log Stripe configuration
+    console.log('Stripe configuration:', {
+      hasSecretKey: !!Deno.env.get('STRIPE_SECRET_KEY'),
+      priceId: body.priceId
+    });
+
     const customers = await stripe.customers.list({
       email: user.email,
       limit: 1
