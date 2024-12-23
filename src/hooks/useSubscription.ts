@@ -10,7 +10,7 @@ export const useSubscription = () => {
       if (!priceId) {
         console.error('No priceId provided');
         toast.error("Configuration Error", {
-          description: "No price ID provided for subscription",
+          description: "Price configuration is missing. Please contact support.",
           duration: 5000,
         });
         return;
