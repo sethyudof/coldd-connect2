@@ -6,7 +6,7 @@ export const BrandLogo = () => {
       <img 
         src="/lovable-uploads/b429b80d-35e9-4042-85e9-a4408e04af7a.png" 
         alt="COLDD Contact Logo" 
-        className="h-8 w-8"
+        className="w-8 aspect-square object-contain"
       />
       <h1 className="text-3xl font-bold">COLDD Contact</h1>
     </div>
