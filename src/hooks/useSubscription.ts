@@ -5,8 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useSubscription = () => {
   const handleSubscribe = async (priceId: string) => {
     try {
-      console.log('Starting subscription process...');
-      console.log('Price ID:', priceId);
+      console.log('Starting subscription process with priceId:', priceId);
       
       if (!priceId) {
         console.error('No priceId provided');

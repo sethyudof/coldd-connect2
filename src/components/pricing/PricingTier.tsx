@@ -5,8 +5,8 @@ interface PricingTierProps {
   description: string;
   price: string;
   interval: string;
-  priceId: string;  // Add priceId to props
-  onSubscribe: (priceId: string) => void;  // Update type to accept priceId
+  priceId: string;
+  onSubscribe: (priceId: string) => void;
 }
 
 export const PricingTier = ({
