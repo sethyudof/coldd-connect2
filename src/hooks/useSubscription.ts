@@ -12,6 +12,7 @@ export const useSubscription = () => {
         console.error('No priceId provided');
         toast.error("Configuration Error", {
           description: "No price ID provided for subscription",
+          duration: 5000,
         });
         return;
       }
@@ -22,6 +23,7 @@ export const useSubscription = () => {
         console.error('No active session found');
         toast.error("Authentication Required", {
           description: "Please sign in to subscribe",
+          duration: 5000,
         });
         return;
       }
@@ -50,6 +52,7 @@ export const useSubscription = () => {
       console.error('Subscription error:', error);
       toast.error("Subscription Error", {
         description: error.message || "Failed to start checkout process",
+        duration: 5000,
       });
     }
   };
