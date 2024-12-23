@@ -11,11 +11,11 @@ const PRICING_TIERS = [
     name: "Basic",
     description: "Perfect for individuals and small teams",
     monthly: {
-      priceId: import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID,
+      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
       price: "$3.99",
     },
     annual: {
-      priceId: import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID,
+      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
       price: "$35.99",
     },
   },
@@ -23,11 +23,11 @@ const PRICING_TIERS = [
     name: "Pro",
     description: "Advanced features for power users",
     monthly: {
-      priceId: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID,
+      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
       price: "$6.99",
     },
     annual: {
-      priceId: import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID,
+      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
       price: "$62.99",
     },
   },
@@ -44,7 +44,7 @@ export const PricingDialog = () => {
         console.error('No priceId provided to handleSubscribe');
         toast({
           title: "Error",
-          description: "Invalid price configuration. Please check environment variables.",
+          description: "Invalid price configuration. Please try again later.",
           variant: "destructive",
         });
         return;
