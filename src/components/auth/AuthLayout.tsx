@@ -24,13 +24,6 @@ export const AuthLayout = () => {
     });
   }, [navigate]);
 
-  const handleAuthError = (error: any) => {
-    console.error("Auth error:", error);
-    toast.error("Authentication Error", {
-      description: error.message || "An unexpected error occurred during authentication"
-    });
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
@@ -72,7 +65,21 @@ export const AuthLayout = () => {
           }}
           providers={[]}
           redirectTo={window.location.origin}
-          onError={handleAuthError}
+          magicLink={false}
+          view="sign_up"
+          showLinks={true}
+          {...{
+            emailPasswordlessEnabled: false,
+            magicLinkEnabled: false,
+            emailPassword: {
+              onError: (error: any) => {
+                console.error("Auth error:", error);
+                toast.error("Authentication Error", {
+                  description: error.message || "An unexpected error occurred during authentication"
+                });
+              }
+            }
+          }}
         />
       </Card>
     </div>
