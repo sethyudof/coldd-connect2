@@ -34,9 +34,6 @@ export const useSubscription = () => {
       console.log('Calling create-checkout function with priceId:', priceId);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
       });
 
       if (error) {
@@ -47,6 +44,9 @@ export const useSubscription = () => {
       if (data?.url) {
         console.log('Redirecting to checkout URL:', data.url);
         window.location.href = data.url;
+      } else {
+        console.error('No checkout URL received from create-checkout');
+        throw new Error('Failed to create checkout session');
       }
     } catch (error) {
       console.error('Error creating checkout session:', error);

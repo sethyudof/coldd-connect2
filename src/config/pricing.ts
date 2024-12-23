@@ -28,11 +28,11 @@ export const PRICING_TIERS = [
 // Enhanced logging for price ID debugging
 console.log('Pricing configuration loaded:', {
   tier1: {
-    monthly: PRICING_TIERS[0].monthly.priceId,
-    annual: PRICING_TIERS[0].annual.priceId,
+    monthly: PRICING_TIERS[0].monthly.priceId || 'NOT SET',
+    annual: PRICING_TIERS[0].annual.priceId || 'NOT SET',
   },
   tier2: {
-    monthly: PRICING_TIERS[1].monthly.priceId,
-    annual: PRICING_TIERS[1].annual.priceId,
+    monthly: PRICING_TIERS[1].monthly.priceId || 'NOT SET',
+    annual: PRICING_TIERS[1].annual.priceId || 'NOT SET',
   }
 });

@@ -20,6 +20,26 @@ serve(async (req) => {
       throw new Error('No price ID provided');
     }
 
+    // Initialize Stripe with detailed error logging
+    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeKey) {
+      console.error('STRIPE_SECRET_KEY is not set');
+      throw new Error('Stripe configuration error');
+    }
+
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: '2023-10-16',
+    });
+
+    // Validate that the price exists in Stripe
+    try {
+      const price = await stripe.prices.retrieve(priceId);
+      console.log('Price validated:', price.id);
+    } catch (error) {
+      console.error('Error validating price:', error);
+      throw new Error('Invalid price ID');
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -34,10 +54,6 @@ serve(async (req) => {
       console.error('Error getting user:', userError);
       throw new Error('No user found');
     }
-
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
-      apiVersion: '2023-10-16',
-    });
 
     console.log('Looking up customer with email:', user.email);
     const customers = await stripe.customers.list({
