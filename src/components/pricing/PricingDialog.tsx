@@ -40,24 +40,6 @@ export const PricingDialog = () => {
 
   const handleSubscribe = async (priceId: string) => {
     try {
-      // Log the environment variables to check if they're properly loaded
-      console.log('Environment variables:', {
-        tier1Monthly: import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID ? 'present' : 'missing',
-        tier1Annual: import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID ? 'present' : 'missing',
-        tier2Monthly: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID ? 'present' : 'missing',
-        tier2Annual: import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID ? 'present' : 'missing',
-      });
-
-      if (!priceId) {
-        console.error('No priceId provided to handleSubscribe');
-        toast({
-          title: "Error",
-          description: "Invalid price configuration. Please check environment variables.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       console.log('Starting subscription process with priceId:', priceId);
       const { data: { session } } = await supabase.auth.getSession();
       
@@ -73,10 +55,7 @@ export const PricingDialog = () => {
 
       console.log('Calling create-checkout function with priceId:', priceId);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId: priceId },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+        body: { priceId },
       });
 
       if (error) {
@@ -92,7 +71,7 @@ export const PricingDialog = () => {
       console.error('Error creating checkout session:', error);
       toast({
         title: "Error",
-        description: "Failed to start checkout process",
+        description: "Failed to start checkout process. Please try again.",
         variant: "destructive",
       });
     }

@@ -23,26 +23,18 @@ serve(async (req) => {
     const body = await req.json();
     console.log('Request body:', body);
     
-    if (!body || typeof body !== 'object') {
-      console.error('Invalid request body:', body);
-      throw new Error('Invalid request body')
-    }
-
-    const { priceId } = body;
-    if (!priceId) {
+    if (!body?.priceId) {
       console.error('No priceId in request body:', body);
       throw new Error('No price ID provided')
     }
 
-    console.log('Processing checkout with priceId:', priceId);
+    console.log('Processing checkout with priceId:', body.priceId);
 
-    const authHeader = req.headers.get('Authorization')!
-    const token = authHeader.replace('Bearer ', '')
-    const { data } = await supabaseClient.auth.getUser(token)
-    const user = data.user
-    const email = user?.email
+    const { data: { user } } = await supabaseClient.auth.getUser(
+      req.headers.get('Authorization')?.replace('Bearer ', '') ?? ''
+    );
 
-    if (!email) {
+    if (!user?.email) {
       throw new Error('No email found')
     }
 
@@ -51,7 +43,7 @@ serve(async (req) => {
     })
 
     const customers = await stripe.customers.list({
-      email: email,
+      email: user.email,
       limit: 1
     })
 
@@ -63,10 +55,10 @@ serve(async (req) => {
     console.log('Creating payment session...')
     const session = await stripe.checkout.sessions.create({
       customer: customer_id,
-      customer_email: customer_id ? undefined : email,
+      customer_email: customer_id ? undefined : user.email,
       line_items: [
         {
-          price: priceId,
+          price: body.priceId,
           quantity: 1,
         },
       ],
