@@ -9,7 +9,6 @@ import { TrialFeatures } from "./TrialFeatures";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export const AuthLayout = () => {
-  const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_in');
   useAuthRedirect();
 
   useEffect(() => {
@@ -46,11 +45,10 @@ export const AuthLayout = () => {
           <div className="flex justify-center mb-2">
             <BrandLogo />
           </div>
-          {view === 'sign_up' && <TrialFeatures />}
+          <TrialFeatures />
         </div>
         <Auth
           supabaseClient={supabase}
-          view={view}
           appearance={{
             theme: ThemeSupa,
             variables: {
@@ -85,10 +83,6 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
-          onView={(view) => {
-            console.log("View changed to:", view);
-            setView(view as 'sign_in' | 'sign_up');
-          }}
         />
       </Card>
     </div>
