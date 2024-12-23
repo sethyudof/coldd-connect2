@@ -17,7 +17,7 @@ export const PricingTier = ({
   priceId,
   onSubscribe,
 }: PricingTierProps) => {
-  const isValidPriceId = priceId && priceId !== 'undefined' && priceId.trim() !== '';
+  const isValidPriceId = priceId && priceId.trim() !== '';
   console.log(`PricingTier ${name} - Price ID:`, priceId, 'Valid:', isValidPriceId);
 
   return (
