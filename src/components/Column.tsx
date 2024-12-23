@@ -95,7 +95,7 @@ export const Column = ({
   };
 
   return (
-    <div className="flex-1 min-w-[280px] max-w-[400px] mx-2 flex flex-col h-full">
+    <div className="flex-1 min-w-[280px] max-w-[400px] flex flex-col h-full">
       <ColumnHeader
         title={title}
         color={color}
@@ -110,7 +110,7 @@ export const Column = ({
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className="flex-1 overflow-y-auto min-h-0"
+            className="flex-1 min-h-0 overflow-y-auto"
           >
             <Card className="p-2 bg-gray-50 dark:bg-gray-800 h-full">
               {contacts.map((contact, index) => (
