@@ -12,7 +12,7 @@ interface AuthFormProps {
 export const AuthForm = ({ view: initialView, onViewChange }: AuthFormProps = {}) => {
   const [view, setView] = useState<"sign_in" | "sign_up">(initialView || "sign_in");
 
-  const handleViewChange = ({ view: newView }: { view: "sign_in" | "sign_up" }) => {
+  const handleViewChange = (newView: "sign_in" | "sign_up") => {
     console.log("View changed to:", newView);
     setView(newView);
     onViewChange?.(newView);
@@ -55,7 +55,7 @@ export const AuthForm = ({ view: initialView, onViewChange }: AuthFormProps = {}
           },
         }}
         view={view}
-        viewChange={handleViewChange}
+        onViewChange={handleViewChange}
       />
       {view === "sign_up" && <TrialFeatures />}
     </div>
