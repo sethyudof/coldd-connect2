@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
@@ -10,6 +10,7 @@ import { BrandLogo } from "@/components/common/BrandLogo";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
+  const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_up');
 
   useEffect(() => {
     // Set dark mode by default
@@ -28,6 +29,10 @@ export const AuthLayout = () => {
     });
   }, [navigate]);
 
+  const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
+    setView(newView);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
@@ -35,29 +40,34 @@ export const AuthLayout = () => {
           <div className="flex justify-center mb-2">
             <BrandLogo />
           </div>
-          <p className="text-center text-muted-foreground mb-6">
-            Start your 7-day free trial today
-          </p>
-          <div className="space-y-2 mb-6">
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
-              <span className="text-sm">Unlimited contacts</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
-              <span className="text-sm">Smart reminders</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="h-4 w-4 text-primary" />
-              <span className="text-sm">Contact categorization</span>
-            </div>
-          </div>
-          <div className="text-center text-sm text-muted-foreground mb-6">
-            Plans start at $3.99/month after trial
-          </div>
+          {view === 'sign_up' && (
+            <>
+              <p className="text-center text-muted-foreground mb-6">
+                Start your 7-day free trial today
+              </p>
+              <div className="space-y-2 mb-6">
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-primary" />
+                  <span className="text-sm">Unlimited contacts</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-primary" />
+                  <span className="text-sm">Smart reminders</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-primary" />
+                  <span className="text-sm">Contact categorization</span>
+                </div>
+              </div>
+              <div className="text-center text-sm text-muted-foreground mb-6">
+                Plans start at $3.99/month after trial
+              </div>
+            </>
+          )}
         </div>
         <Auth
           supabaseClient={supabase}
+          view={view}
           appearance={{
             theme: ThemeSupa,
             variables: {
@@ -91,17 +101,24 @@ export const AuthLayout = () => {
           providers={[]}
           redirectTo={window.location.origin}
           magicLink={false}
-          view="sign_up"
           showLinks={true}
           {...{
             emailPasswordlessEnabled: false,
             magicLinkEnabled: false,
+            onViewChange: handleViewChange,
             emailPassword: {
               onError: (error: any) => {
                 console.error("Auth error:", error);
-                toast.error("Authentication Error", {
-                  description: error.message || "An unexpected error occurred during authentication"
-                });
+                if (error.message?.includes('User already registered')) {
+                  toast.error("Account Already Exists", {
+                    description: "Please sign in with your existing account",
+                  });
+                  setView('sign_in');
+                } else {
+                  toast.error("Authentication Error", {
+                    description: error.message || "An unexpected error occurred during authentication"
+                  });
+                }
               }
             }
           }}
