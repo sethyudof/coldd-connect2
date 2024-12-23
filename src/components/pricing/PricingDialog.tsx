@@ -40,9 +40,21 @@ export const PricingDialog = () => {
 
   const handleSubscribe = async (priceId: string) => {
     try {
-      console.log('Attempting to subscribe with priceId:', priceId);
+      if (!priceId) {
+        console.error('No priceId provided to handleSubscribe');
+        toast({
+          title: "Error",
+          description: "Invalid price configuration",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      console.log('Starting subscription process with priceId:', priceId);
       const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
+        console.error('No session found');
         toast({
           title: "Error",
           description: "You must be logged in to subscribe",
@@ -51,15 +63,21 @@ export const PricingDialog = () => {
         return;
       }
 
+      console.log('Calling create-checkout function with priceId:', priceId);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
+        body: { priceId: priceId },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from create-checkout:', error);
+        throw error;
+      }
+
       if (data?.url) {
+        console.log('Redirecting to checkout URL:', data.url);
         window.location.href = data.url;
       }
     } catch (error) {

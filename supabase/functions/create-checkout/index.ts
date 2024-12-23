@@ -23,6 +23,11 @@ serve(async (req) => {
     const body = await req.json();
     console.log('Request body:', body);
     
+    if (!body || typeof body !== 'object') {
+      console.error('Invalid request body:', body);
+      throw new Error('Invalid request body')
+    }
+
     const { priceId } = body;
     if (!priceId) {
       console.error('No priceId in request body:', body);
