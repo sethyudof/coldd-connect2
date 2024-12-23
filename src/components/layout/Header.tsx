@@ -1,14 +1,17 @@
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
 import { DarkModeToggle } from "@/components/DarkModeToggle";
-import { PricingDialog } from "@/components/pricing/PricingDialog";
 import { BrandLogo } from "@/components/common/BrandLogo";
-import { AddContactDialog } from "@/components/contact/AddContactDialog";
-import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { Contact, ContactsState } from "@/components/contact/ColumnsContainer";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AccountDialog } from "@/components/account/AccountDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, LogOut, Plus, List, Star } from "lucide-react";
 
 interface HeaderProps {
   isDark: boolean;
@@ -49,28 +52,75 @@ export const Header = ({
         <div className="flex justify-between items-center">
           <BrandLogo />
           <div className="flex items-center gap-4">
-            <PricingDialog />
             <DarkModeToggle isDark={isDark} toggleTheme={toggleTheme} />
-            <AddContactDialog onAddContact={onAddContact} categories={categories} />
-            <ContactListDialog
-              contacts={contacts}
-              allContacts={allContacts}
-              categories={categories}
-              onUpdateContact={onUpdateContact}
-            />
             <AccountDialog />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="h-9 w-9"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="sr-only">Logout</span>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  Actions <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  className="gap-2"
+                  onClick={() => {
+                    const dialog = document.querySelector('[data-dialog="pricing"]');
+                    if (dialog) {
+                      (dialog as HTMLElement).click();
+                    }
+                  }}
+                >
+                  <Star className="h-4 w-4" />
+                  Upgrade to Pro
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="gap-2"
+                  onClick={() => {
+                    const dialog = document.querySelector('[data-dialog="add-contact"]');
+                    if (dialog) {
+                      (dialog as HTMLElement).click();
+                    }
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Contact
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  className="gap-2"
+                  onClick={() => {
+                    const dialog = document.querySelector('[data-dialog="contact-list"]');
+                    if (dialog) {
+                      (dialog as HTMLElement).click();
+                    }
+                  }}
+                >
+                  <List className="h-4 w-4" />
+                  Contact List
+                </DropdownMenuItem>
+                <DropdownMenuItem className="gap-2" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
+      </div>
+      <div className="hidden">
+        <PricingDialog />
+        <AddContactDialog onAddContact={onAddContact} categories={categories} />
+        <ContactListDialog
+          contacts={contacts}
+          allContacts={allContacts}
+          categories={categories}
+          onUpdateContact={onUpdateContact}
+        />
       </div>
     </div>
   );
 };
+
+// Import these at the top of the file
+import { PricingDialog } from "@/components/pricing/PricingDialog";
+import { AddContactDialog } from "@/components/contact/AddContactDialog";
+import { ContactListDialog } from "@/components/contact/ContactListDialog";
