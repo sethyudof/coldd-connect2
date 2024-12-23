@@ -12,7 +12,7 @@ export interface Contact {
   reminderUnit?: 'days' | 'weeks' | 'months' | 'years';
   nextReminder?: Date;
   startDate?: Date;
-  user_id?: string;  // Added this field to match the database schema
+  user_id?: string;
 }
 
 export type ContactsState = {
@@ -101,7 +101,7 @@ export const ColumnsContainer = ({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex overflow-x-auto h-full">
+      <div className="flex gap-4 overflow-x-auto h-full pb-4">
         {Object.entries(categories).map(([id, { title, color }]) => (
           <Column
             key={id}

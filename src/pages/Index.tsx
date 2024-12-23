@@ -14,7 +14,7 @@ const Index = () => {
   } = useContacts();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex flex-col h-screen bg-background text-foreground">
       <Header
         isDark={isDark}
         toggleTheme={toggleTheme}
@@ -25,7 +25,7 @@ const Index = () => {
         onUpdateContact={handleUpdateContact}
       />
       
-      <div className="pt-20 pb-4 px-8 h-[calc(100vh-1rem)]">
+      <main className="flex-1 overflow-hidden p-8 pt-20">
         <div className="h-full">
           <ColumnsContainer
             contacts={contacts}
@@ -35,7 +35,7 @@ const Index = () => {
             onUpdateContact={handleUpdateContact}
           />
         </div>
-      </div>
+      </main>
     </div>
   );
 };
