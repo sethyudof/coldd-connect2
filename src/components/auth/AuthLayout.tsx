@@ -5,6 +5,7 @@ import { BrandLogo } from "@/components/common/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { AuthForm } from "./AuthForm";
+import { TrialFeatures } from "./TrialFeatures";
 
 export const AuthLayout = () => {
   const [currentView, setCurrentView] = useState<'sign_in' | 'sign_up'>('sign_in');
