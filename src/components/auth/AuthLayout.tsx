@@ -22,12 +22,10 @@ export const AuthLayout = () => {
         console.log("User updated");
       } else if (event === 'SIGNED_OUT') {
         console.log("User signed out");
-      } else if (event === 'USER_DELETED') {
-        console.log("User deleted");
       }
 
-      // Handle specific error cases
-      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+      // Handle error cases
+      if (event === 'SIGNED_OUT') {
         toast.error("Authentication Error", {
           description: "Please sign in again",
           duration: 5000,
