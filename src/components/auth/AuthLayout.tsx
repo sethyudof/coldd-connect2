@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
-import { TrialFeatures } from "./TrialFeatures";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { AuthForm } from "./AuthForm";
 
@@ -33,11 +32,6 @@ export const AuthLayout = () => {
     };
   }, []);
 
-  const handleViewChange = (view: 'sign_in' | 'sign_up') => {
-    console.log("View changed to:", view);
-    setCurrentView(view);
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
@@ -49,7 +43,7 @@ export const AuthLayout = () => {
         </div>
         <AuthForm 
           view={currentView}
-          onViewChange={handleViewChange}
+          onViewChange={setCurrentView}
         />
       </Card>
     </div>

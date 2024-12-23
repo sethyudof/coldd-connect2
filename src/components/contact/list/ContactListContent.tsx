@@ -20,14 +20,27 @@ export const ContactListContent = ({
     <Table>
       <ContactListHeader />
       <TableBody>
-        {allContacts.map((contact) => (
-          <ContactTableRow
-            key={contact.id}
-            contact={contact}
-            categories={categories}
-            onUpdateContact={onUpdateContact}
-          />
-        ))}
+        {allContacts.map((contact) => {
+          const columnId = Object.keys(contacts).find(id => 
+            contacts[id].contacts.some(c => c.id === contact.id)
+          ) || '';
+          
+          return (
+            <ContactTableRow
+              key={contact.id}
+              contact={contact}
+              columnId={columnId}
+              categories={categories}
+              editingContact={null}
+              handleStartEdit={() => {}}
+              handleSaveEdit={() => {}}
+              handleCancelEdit={() => {}}
+              setEditingContact={() => {}}
+              contactCategories={[]}
+              onDelete={() => {}}
+            />
+          );
+        })}
       </TableBody>
     </Table>
   );

@@ -4,8 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { TrialFeatures } from "./TrialFeatures";
 import { useState } from "react";
 
-export const AuthForm = () => {
-  const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
+interface AuthFormProps {
+  view?: "sign_in" | "sign_up";
+  onViewChange?: (view: "sign_in" | "sign_up") => void;
+}
+
+export const AuthForm = ({ view: initialView, onViewChange }: AuthFormProps = {}) => {
+  const [view, setView] = useState<"sign_in" | "sign_up">(initialView || "sign_in");
+
+  const handleViewChange = ({ view: newView }: { view: "sign_in" | "sign_up" }) => {
+    console.log("View changed to:", newView);
+    setView(newView);
+    onViewChange?.(newView);
+  };
 
   return (
     <div className="w-full max-w-[400px] mx-auto space-y-6">
@@ -44,10 +55,7 @@ export const AuthForm = () => {
           },
         }}
         view={view}
-        viewChange={({ view }) => {
-          console.log("View changed to:", view);
-          setView(view as "sign_in" | "sign_up");
-        }}
+        onViewChange={handleViewChange}
       />
       {view === "sign_up" && <TrialFeatures />}
     </div>
