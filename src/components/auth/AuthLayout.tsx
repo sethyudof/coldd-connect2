@@ -9,7 +9,7 @@ import { TrialFeatures } from "./TrialFeatures";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export const AuthLayout = () => {
-  const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_up');
+  const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_in');
   useAuthRedirect();
 
   useEffect(() => {
@@ -85,6 +85,10 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
+          onViewChange={(newView) => {
+            console.log("View changed to:", newView);
+            setView(newView as 'sign_in' | 'sign_up');
+          }}
         />
       </Card>
     </div>
