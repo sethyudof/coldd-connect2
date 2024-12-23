@@ -1,42 +1,16 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Check } from "lucide-react";
 import { BrandLogo } from "@/components/common/BrandLogo";
+import { supabase } from "@/integrations/supabase/client";
+import { TrialFeatures } from "./TrialFeatures";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 export const AuthLayout = () => {
-  const navigate = useNavigate();
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_up');
-
-  useEffect(() => {
-    // Set dark mode by default
-    document.documentElement.classList.add('dark');
-    
-    console.log("Checking auth state...");
-    supabase.auth.getSession().then(({ data: { session }}) => {
-      console.log("Current session:", session);
-      if (session) {
-        console.log("User already logged in, redirecting to home...");
-        navigate("/");
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session);
-      if (event === "SIGNED_IN" && session) {
-        console.log("User signed in, redirecting to home...");
-        navigate("/");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  useAuthRedirect();
 
   const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
     console.log("Changing view to:", newView);
@@ -70,30 +44,7 @@ export const AuthLayout = () => {
           <div className="flex justify-center mb-2">
             <BrandLogo />
           </div>
-          {view === 'sign_up' && (
-            <>
-              <p className="text-center text-muted-foreground mb-6">
-                Start your 7-day free trial today
-              </p>
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Unlimited contacts</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Smart reminders</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Contact categorization</span>
-                </div>
-              </div>
-              <div className="text-center text-sm text-muted-foreground mb-6">
-                Plans start at $3.99/month after trial
-              </div>
-            </>
-          )}
+          {view === 'sign_up' && <TrialFeatures />}
         </div>
         <Auth
           supabaseClient={supabase}
