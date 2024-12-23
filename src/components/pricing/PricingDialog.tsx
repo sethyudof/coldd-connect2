@@ -7,27 +7,27 @@ import { supabase } from "@/integrations/supabase/client";
 
 const PRICING_TIERS = [
   {
-    name: "Tier 1",
-    description: "Basic features for individuals",
+    name: "Basic",
+    description: "Perfect for individuals and small teams",
     monthly: {
       priceId: import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID,
-      price: "$9",
+      price: "$29",
     },
     annual: {
       priceId: import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID,
-      price: "$90",
+      price: "$290",
     },
   },
   {
-    name: "Tier 2",
+    name: "Pro",
     description: "Advanced features for power users",
     monthly: {
       priceId: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID,
-      price: "$19",
+      price: "$49",
     },
     annual: {
       priceId: import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID,
-      price: "$190",
+      price: "$490",
     },
   },
 ];
