@@ -18,6 +18,19 @@ serve(async (req) => {
   )
 
   try {
+    // Log the raw request body for debugging
+    const rawBody = await req.text();
+    console.log('Raw request body:', rawBody);
+
+    // Parse the JSON body
+    let body;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (e) {
+      console.error('Failed to parse request body:', e);
+      throw new Error('Invalid JSON in request body');
+    }
+
     const authHeader = req.headers.get('Authorization')!
     const token = authHeader.replace('Bearer ', '')
     const { data } = await supabaseClient.auth.getUser(token)
@@ -28,13 +41,15 @@ serve(async (req) => {
       throw new Error('No email found')
     }
 
-    // Parse the request body and log it for debugging
-    const { priceId } = await req.json()
-    console.log('Received request with priceId:', priceId)
-
+    console.log('Request body:', body);
+    const { priceId } = body;
+    
     if (!priceId) {
+      console.error('No priceId found in request body:', body);
       throw new Error('No price ID provided')
     }
+
+    console.log('Using priceId:', priceId);
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2023-10-16',
