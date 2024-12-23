@@ -1,3 +1,7 @@
 project_id = "pwwnencvpofrwnqilznb"
+[functions.verify-phone]
+verify_jwt = false
+[functions.verify-phone-code]
+verify_jwt = false
 [functions.send-sms]
 verify_jwt = false

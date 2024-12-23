@@ -8,6 +8,7 @@ import { ContactListDialog } from "@/components/contact/ContactListDialog";
 import { Contact, ContactsState } from "@/components/contact/ColumnsContainer";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { AccountDialog } from "@/components/account/AccountDialog";
 
 interface HeaderProps {
   isDark: boolean;
@@ -57,6 +58,7 @@ export const Header = ({
               categories={categories}
               onUpdateContact={onUpdateContact}
             />
+            <AccountDialog />
             <Button
               variant="ghost"
               size="icon"

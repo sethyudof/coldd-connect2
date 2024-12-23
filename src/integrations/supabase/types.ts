@@ -102,6 +102,27 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          phone_number: string | null
+          phone_verified: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          phone_number?: string | null
+          phone_verified?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          phone_number?: string | null
+          phone_verified?: boolean | null
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at: string | null
