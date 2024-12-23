@@ -48,10 +48,10 @@ export const AuthForm = ({ view, onViewChange }: AuthFormProps) => {
       magicLink={false}
       showLinks={true}
       view={view}
-      onChange={({ view }) => {
-        console.log("Auth view changed to:", view);
-        if (view === 'sign_in' || view === 'sign_up') {
-          onViewChange(view);
+      onAuthStateChange={({ data }) => {
+        console.log("Auth view changed to:", data?.view);
+        if (data?.view === 'sign_in' || data?.view === 'sign_up') {
+          onViewChange(data.view);
         }
       }}
     />
