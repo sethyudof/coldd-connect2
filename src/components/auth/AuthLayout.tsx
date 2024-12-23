@@ -12,11 +12,6 @@ export const AuthLayout = () => {
   const [view, setView] = useState<'sign_in' | 'sign_up'>('sign_up');
   useAuthRedirect();
 
-  const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
-    console.log("Changing view to:", newView);
-    setView(newView);
-  };
-
   const handleError = (error: any) => {
     console.error("Auth error:", error);
     const errorMessage = error.message || error.error_description || "An unexpected error occurred";
@@ -83,7 +78,6 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
-          viewChange={handleViewChange}
           onError={handleError}
         />
       </Card>
