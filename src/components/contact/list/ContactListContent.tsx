@@ -21,8 +21,9 @@ export const ContactListContent = ({
       <ContactListHeader />
       <TableBody>
         {allContacts.map((contact) => {
+          // Find which column/category contains this contact
           const columnId = Object.keys(contacts).find(id => 
-            contacts[id].contacts.some(c => c.id === contact.id)
+            contacts[id].some(c => c.id === contact.id)
           ) || '';
           
           return (
