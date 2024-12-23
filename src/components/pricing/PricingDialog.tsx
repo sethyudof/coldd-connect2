@@ -11,11 +11,11 @@ const PRICING_TIERS = [
     description: "Perfect for individuals and small teams",
     monthly: {
       priceId: import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID,
-      price: "$29",
+      price: "$3.99",
     },
     annual: {
       priceId: import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID,
-      price: "$290",
+      price: "$35.99",
     },
   },
   {
@@ -23,11 +23,11 @@ const PRICING_TIERS = [
     description: "Advanced features for power users",
     monthly: {
       priceId: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID,
-      price: "$49",
+      price: "$6.99",
     },
     annual: {
       priceId: import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID,
-      price: "$490",
+      price: "$62.99",
     },
   },
 ];
