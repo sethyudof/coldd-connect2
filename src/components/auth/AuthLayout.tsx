@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { TrialFeatures } from "./TrialFeatures";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { AuthForm } from "./AuthForm";
 
 export const AuthLayout = () => {
   const [currentView, setCurrentView] = useState<'sign_in' | 'sign_up'>('sign_in');
@@ -22,10 +21,6 @@ export const AuthLayout = () => {
         console.log("User updated");
       } else if (event === 'SIGNED_OUT') {
         console.log("User signed out");
-      }
-
-      // Handle error cases
-      if (event === 'SIGNED_OUT') {
         toast.error("Authentication Error", {
           description: "Please sign in again",
           duration: 5000,
@@ -33,11 +28,15 @@ export const AuthLayout = () => {
       }
     });
 
-    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  const handleViewChange = (view: 'sign_in' | 'sign_up') => {
+    console.log("View changed to:", view);
+    setCurrentView(view);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -48,47 +47,9 @@ export const AuthLayout = () => {
           </div>
           {currentView === 'sign_up' && <TrialFeatures />}
         </div>
-        <Auth
-          supabaseClient={supabase}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: 'rgb(var(--primary))',
-                  brandAccent: 'rgb(var(--primary))',
-                },
-                radii: {
-                  borderRadiusButton: '0.5rem',
-                },
-              },
-            },
-            style: {
-              button: {
-                fontSize: '14px',
-                padding: '10px 15px',
-              },
-            },
-            className: {
-              button: 'custom-button',
-            },
-          }}
-          localization={{
-            variables: {
-              sign_up: {
-                button_label: 'Start free trial'
-              }
-            }
-          }}
-          providers={[]}
-          redirectTo={window.location.origin}
-          magicLink={false}
-          showLinks={true}
+        <AuthForm 
           view={currentView}
-          onViewChange={(view) => {
-            console.log("View changed to:", view);
-            setCurrentView(view as 'sign_in' | 'sign_up');
-          }}
+          onViewChange={handleViewChange}
         />
       </Card>
     </div>
