@@ -6,6 +6,7 @@ import { PricingTier } from "./PricingTier";
 import { BillingIntervalToggle } from "./BillingIntervalToggle";
 import { useSubscription } from "@/hooks/useSubscription";
 import { PRICING_TIERS } from "@/config/pricing";
+import { toast } from "sonner";
 
 export const PricingDialog = () => {
   const [isAnnual, setIsAnnual] = useState(false);
@@ -20,9 +21,15 @@ export const PricingDialog = () => {
     });
   }, []);
 
-  const handleSubscription = (priceId: string) => {
+  const handleSubscription = async (priceId: string) => {
     console.log('Handling subscription with priceId:', priceId);
-    handleSubscribe(priceId);
+    if (!priceId) {
+      toast.error("Configuration Error", {
+        description: "Price configuration is missing. Please contact support.",
+      });
+      return;
+    }
+    await handleSubscribe(priceId);
   };
 
   return (
