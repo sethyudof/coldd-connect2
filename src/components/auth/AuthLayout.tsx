@@ -85,14 +85,9 @@ export const AuthLayout = () => {
           magicLink={false}
           showLinks={true}
           view={currentView}
-          viewOptions={{
-            signUp: {
-              showLinks: true,
-            },
-          }}
-          onViewChange={(newView) => {
-            console.log("View changed to:", newView);
-            setCurrentView(newView as 'sign_in' | 'sign_up');
+          onViewChange={(view) => {
+            console.log("View changed to:", view);
+            setCurrentView(view as 'sign_in' | 'sign_up');
           }}
         />
       </Card>
