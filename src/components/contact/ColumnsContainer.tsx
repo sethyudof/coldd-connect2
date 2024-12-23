@@ -33,15 +33,22 @@ export const ColumnsContainer = ({
   onUpdateContacts,
   onUpdateContact,
 }: ColumnsContainerProps) => {
+  console.log('ColumnsContainer rendering with contacts:', contacts);
+
   const handleDragEnd = (result: DropResult) => {
+    console.log('Drag ended:', result);
     const { destination, source, draggableId } = result;
 
-    if (!destination) return;
+    if (!destination) {
+      console.log('No destination, skipping update');
+      return;
+    }
 
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     ) {
+      console.log('Dropped in same position, skipping update');
       return;
     }
 
@@ -49,7 +56,10 @@ export const ColumnsContainer = ({
     const destColumn = contacts[destination.droppableId] || [];
     const draggedContact = sourceColumn.find(contact => contact.id === draggableId);
 
-    if (!draggedContact) return;
+    if (!draggedContact) {
+      console.log('Contact not found:', draggableId);
+      return;
+    }
 
     const newSourceColumn = [...sourceColumn];
     newSourceColumn.splice(source.index, 1);
@@ -63,6 +73,7 @@ export const ColumnsContainer = ({
       [destination.droppableId]: newDestColumn,
     };
 
+    console.log('Updating contacts:', newContacts);
     if (onUpdateContacts) {
       onUpdateContacts(newContacts);
     }
@@ -70,7 +81,7 @@ export const ColumnsContainer = ({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex gap-4 h-full overflow-x-auto overflow-y-hidden">
+      <div className="flex gap-4 h-full overflow-x-auto overflow-y-hidden px-2 pb-4">
         {Object.entries(categories).map(([id, { title, color }]) => (
           <Column
             key={id}

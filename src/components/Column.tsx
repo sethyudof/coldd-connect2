@@ -45,6 +45,8 @@ export const Column = ({
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  console.log('Column rendering:', { id, title, contactsCount: contacts.length });
+
   const availableContacts = allContacts.filter(
     contact => !contacts.some(existing => existing.id === contact.id)
   );

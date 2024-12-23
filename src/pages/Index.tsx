@@ -25,14 +25,16 @@ const Index = () => {
         onUpdateContact={handleUpdateContact}
       />
       
-      <main className="flex-1 min-h-0 p-8 pt-20">
-        <ColumnsContainer
-          contacts={contacts}
-          categories={COLDD_COLUMNS}
-          allContacts={allContacts}
-          onUpdateContacts={setContacts}
-          onUpdateContact={handleUpdateContact}
-        />
+      <main className="flex-1 overflow-hidden p-4">
+        <div className="h-full pt-16">
+          <ColumnsContainer
+            contacts={contacts}
+            categories={COLDD_COLUMNS}
+            allContacts={allContacts}
+            onUpdateContacts={setContacts}
+            onUpdateContact={handleUpdateContact}
+          />
+        </div>
       </main>
     </div>
   );
