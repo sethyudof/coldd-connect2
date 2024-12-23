@@ -5,12 +5,12 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Check } from "lucide-react";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Log the current session for debugging
     console.log("Checking auth state...");
     supabase.auth.getSession().then(({ data: { session }}) => {
       console.log("Current session:", session);
@@ -36,9 +36,26 @@ export const AuthLayout = () => {
       <Card className="w-full max-w-md p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-center mb-2">COLDD Contact</h1>
-          <p className="text-center text-muted-foreground">
-            Sign in to manage your contacts
+          <p className="text-center text-muted-foreground mb-6">
+            Start your 7-day free trial today
           </p>
+          <div className="space-y-2 mb-6">
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-primary" />
+              <span className="text-sm">Unlimited contacts</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-primary" />
+              <span className="text-sm">Smart reminders</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-primary" />
+              <span className="text-sm">Contact categorization</span>
+            </div>
+          </div>
+          <div className="text-center text-sm text-muted-foreground mb-6">
+            Plans start at $3.99/month after trial
+          </div>
         </div>
         <Auth
           supabaseClient={supabase}
@@ -55,6 +72,7 @@ export const AuthLayout = () => {
           }}
           providers={[]}
           redirectTo={window.location.origin}
+          onError={handleAuthError}
         />
       </Card>
     </div>
