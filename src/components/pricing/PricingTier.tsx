@@ -5,7 +5,8 @@ interface PricingTierProps {
   description: string;
   price: string;
   interval: string;
-  onSubscribe: () => void;
+  priceId: string;  // Add priceId to props
+  onSubscribe: (priceId: string) => void;  // Update type to accept priceId
 }
 
 export const PricingTier = ({
@@ -13,8 +14,11 @@ export const PricingTier = ({
   description,
   price,
   interval,
+  priceId,
   onSubscribe,
 }: PricingTierProps) => {
+  console.log('PricingTier rendered with priceId:', priceId);
+  
   return (
     <div className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors">
       <h3 className="text-lg font-semibold">{name}</h3>
@@ -25,7 +29,13 @@ export const PricingTier = ({
           {interval}
         </span>
       </div>
-      <Button className="w-full" onClick={onSubscribe}>
+      <Button 
+        className="w-full" 
+        onClick={() => {
+          console.log('Subscribe button clicked with priceId:', priceId);
+          onSubscribe(priceId);
+        }}
+      >
         Upgrade Now
       </Button>
     </div>

@@ -12,6 +12,11 @@ export const PricingDialog = () => {
   const [open, setOpen] = useState(false);
   const { handleSubscribe } = useSubscription();
 
+  const handleSubscription = (priceId: string) => {
+    console.log('Handling subscription with priceId:', priceId);
+    handleSubscribe(priceId);
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -33,11 +38,8 @@ export const PricingDialog = () => {
               description={tier.description}
               price={isAnnual ? tier.annual.price : tier.monthly.price}
               interval={isAnnual ? "/year" : "/month"}
-              onSubscribe={() =>
-                handleSubscribe(
-                  isAnnual ? tier.annual.priceId : tier.monthly.priceId
-                )
-              }
+              priceId={isAnnual ? tier.annual.priceId : tier.monthly.priceId}
+              onSubscribe={handleSubscription}
             />
           ))}
         </div>
