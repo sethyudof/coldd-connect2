@@ -1,6 +1,7 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 interface AuthFormProps {
   view: 'sign_in' | 'sign_up';
@@ -10,6 +11,22 @@ interface AuthFormProps {
 export const AuthForm = ({ view, onViewChange }: AuthFormProps) => {
   console.log("Rendering AuthForm with view:", view);
   
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'USER_SIGNED_IN') {
+        console.log("User signed in:", session?.user?.email);
+      } else if (event === 'SIGNED_OUT') {
+        console.log("User signed out");
+      } else {
+        console.log("Auth event:", event);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <Auth
       supabaseClient={supabase}
@@ -48,12 +65,6 @@ export const AuthForm = ({ view, onViewChange }: AuthFormProps) => {
       magicLink={false}
       showLinks={true}
       view={view}
-      onAuthStateChange={({ data }) => {
-        console.log("Auth view changed to:", data?.view);
-        if (data?.view === 'sign_in' || data?.view === 'sign_up') {
-          onViewChange(data.view);
-        }
-      }}
     />
   );
 };
