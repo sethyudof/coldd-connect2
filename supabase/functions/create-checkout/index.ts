@@ -30,12 +30,19 @@ serve(async (req) => {
 
     console.log('Processing checkout with priceId:', body.priceId);
 
-    const { data: { user } } = await supabaseClient.auth.getUser(
-      req.headers.get('Authorization')?.replace('Bearer ', '') ?? ''
+    // Get the user from the Authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('No authorization header')
+    }
+
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
+      authHeader.replace('Bearer ', '')
     );
 
-    if (!user?.email) {
-      throw new Error('No email found')
+    if (userError || !user?.email) {
+      console.error('Error getting user:', userError);
+      throw new Error('No user found')
     }
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
