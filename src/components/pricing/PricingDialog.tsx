@@ -4,6 +4,7 @@ import { CreditCard } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { PricingTier } from "./PricingTier";
 
 const PRICING_TIERS = [
   {
@@ -99,35 +100,24 @@ export const PricingDialog = () => {
               size="sm"
               onClick={() => setIsAnnual(true)}
             >
-              Annual (Save 17%)
+              Annual (Save 25%)
             </Button>
           </div>
         </div>
         <div className="grid md:grid-cols-2 gap-4">
           {PRICING_TIERS.map((tier) => (
-            <div
+            <PricingTier
               key={tier.name}
-              className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors"
-            >
-              <h3 className="text-lg font-semibold">{tier.name}</h3>
-              <p className="text-sm text-muted-foreground">{tier.description}</p>
-              <div className="text-3xl font-bold">
-                {isAnnual ? tier.annual.price : tier.monthly.price}
-                <span className="text-sm font-normal text-muted-foreground">
-                  {isAnnual ? "/year" : "/month"}
-                </span>
-              </div>
-              <Button
-                className="w-full"
-                onClick={() =>
-                  handleSubscribe(
-                    isAnnual ? tier.annual.priceId : tier.monthly.priceId
-                  )
-                }
-              >
-                Start 7-day Free Trial
-              </Button>
-            </div>
+              name={tier.name}
+              description={tier.description}
+              price={isAnnual ? tier.annual.price : tier.monthly.price}
+              interval={isAnnual ? "/year" : "/month"}
+              onSubscribe={() =>
+                handleSubscribe(
+                  isAnnual ? tier.annual.priceId : tier.monthly.priceId
+                )
+              }
+            />
           ))}
         </div>
       </DialogContent>
