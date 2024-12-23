@@ -35,9 +35,8 @@ export const PricingTier = ({
           console.log('Subscribe button clicked with priceId:', priceId);
           onSubscribe(priceId);
         }}
-        disabled={!priceId}
       >
-        {priceId ? 'Upgrade Now' : 'Contact Support'}
+        Upgrade Now
       </Button>
     </div>
   );
