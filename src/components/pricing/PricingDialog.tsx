@@ -89,16 +89,18 @@ export const PricingDialog = () => {
         <div className="flex justify-center mb-6">
           <div className="flex items-center space-x-2 bg-muted p-1 rounded-lg">
             <Button
-              variant={isAnnual ? "ghost" : "secondary"}
+              variant={isAnnual ? "outline" : "default"}
               size="sm"
               onClick={() => setIsAnnual(false)}
+              className="transition-colors"
             >
               Monthly
             </Button>
             <Button
-              variant={isAnnual ? "secondary" : "ghost"}
+              variant={isAnnual ? "default" : "outline"}
               size="sm"
               onClick={() => setIsAnnual(true)}
+              className="transition-colors"
             >
               Annual (Save 25%)
             </Button>
