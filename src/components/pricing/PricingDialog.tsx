@@ -15,6 +15,14 @@ export const PricingDialog = () => {
 
   const handleSubscription = async (priceId: string) => {
     try {
+      if (!priceId || priceId === 'undefined') {
+        console.error('Invalid price ID:', priceId);
+        toast.error("Configuration Error", {
+          description: "Invalid price configuration. Please try again later.",
+        });
+        return;
+      }
+      
       console.log('Starting subscription process with priceId:', priceId);
       await handleSubscribe(priceId);
     } catch (error) {
@@ -50,7 +58,7 @@ export const PricingDialog = () => {
                 description={tier.description}
                 price={isAnnual ? tier.annual.price : tier.monthly.price}
                 interval={isAnnual ? "/year" : "/month"}
-                priceId={currentPriceId}
+                priceId={currentPriceId || ''}
                 onSubscribe={handleSubscription}
               />
             );
