@@ -85,7 +85,7 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
-          onViewChange={(newView) => {
+          viewChange={(newView) => {
             console.log("View changed to:", newView);
             setView(newView as 'sign_in' | 'sign_up');
           }}
