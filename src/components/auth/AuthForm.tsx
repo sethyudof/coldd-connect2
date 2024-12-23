@@ -66,7 +66,7 @@ export const AuthForm = ({ view, onViewChange }: AuthFormProps) => {
       magicLink={false}
       showLinks={true}
       view={view}
-      onViewChange={({ view }) => {
+      onAuthViewChange={({ view }) => {
         console.log("View changed to:", view);
         if (view === 'sign_in' || view === 'sign_up') {
           onViewChange(view);
