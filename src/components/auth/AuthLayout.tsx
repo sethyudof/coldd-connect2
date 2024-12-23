@@ -43,6 +43,26 @@ export const AuthLayout = () => {
     setView(newView);
   };
 
+  const handleError = (error: any) => {
+    console.error("Auth error:", error);
+    const errorMessage = error.message || error.error_description || "An unexpected error occurred";
+    
+    if (errorMessage.includes('User already registered') || errorMessage.includes('user_already_exists')) {
+      console.log("User already exists, switching to sign in view");
+      toast.error("Account Already Exists", {
+        description: "Please sign in with your existing account",
+        duration: 5000,
+      });
+      setView('sign_in');
+    } else {
+      console.error("Unexpected auth error:", error);
+      toast.error("Authentication Error", {
+        description: errorMessage,
+        duration: 5000,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
@@ -116,23 +136,7 @@ export const AuthLayout = () => {
             emailPasswordlessEnabled: false,
             magicLinkEnabled: false,
             onViewChange: handleViewChange,
-            emailPassword: {
-              onError: (error: any) => {
-                console.error("Auth error:", error);
-                if (error.message?.includes('User already registered')) {
-                  console.log("User already exists, switching to sign in view");
-                  toast.error("Account Already Exists", {
-                    description: "Please sign in with your existing account",
-                  });
-                  setView('sign_in');
-                } else {
-                  console.error("Unexpected auth error:", error);
-                  toast.error("Authentication Error", {
-                    description: error.message || "An unexpected error occurred during authentication"
-                  });
-                }
-              }
-            }
+            onError: handleError
           }}
         />
       </Card>
