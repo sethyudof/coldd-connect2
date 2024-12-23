@@ -26,13 +26,9 @@ export const PRICING_TIERS = [
 ];
 
 // Enhanced logging for price ID debugging
-console.log('Pricing configuration loaded:', {
-  tier1: {
-    monthly: PRICING_TIERS[0].monthly.priceId || 'NOT SET',
-    annual: PRICING_TIERS[0].annual.priceId || 'NOT SET',
-  },
-  tier2: {
-    monthly: PRICING_TIERS[1].monthly.priceId || 'NOT SET',
-    annual: PRICING_TIERS[1].annual.priceId || 'NOT SET',
-  }
+console.log('Stripe Price IDs loaded:', {
+  tier1Monthly: import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID || 'NOT SET',
+  tier1Annual: import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID || 'NOT SET',
+  tier2Monthly: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID || 'NOT SET',
+  tier2Annual: import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID || 'NOT SET'
 });
