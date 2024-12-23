@@ -1,53 +1,34 @@
-import { TableBody } from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
+import { ContactListHeader } from "./ContactListHeader";
 import { ContactTableRow } from "../ContactTableRow";
+import { Contact, ContactsState } from "../ColumnsContainer";
 
-interface ContactListContentProps {
-  groupedContacts: Array<{
-    contact: any;
-    categories: Array<{
-      id: string;
-      title: string;
-      color: string;
-    }>;
-  }>;
+export interface ContactListContentProps {
+  contacts: ContactsState;
+  allContacts: Contact[];
   categories: Record<string, { title: string; color: string }>;
-  editingContact: any;
-  handleStartEdit: (columnId: string, contact: any) => void;
-  handleSaveEdit: () => void;
-  handleCancelEdit: () => void;
-  setEditingContact: (contact: any) => void;
-  onContactDeleted: () => void;
+  onUpdateContact: (columnId: string, contactId: string, updates: Partial<Contact>) => void;
 }
 
 export const ContactListContent = ({
-  groupedContacts,
+  contacts,
+  allContacts,
   categories,
-  editingContact,
-  handleStartEdit,
-  handleSaveEdit,
-  handleCancelEdit,
-  setEditingContact,
-  onContactDeleted
+  onUpdateContact,
 }: ContactListContentProps) => {
-  console.log('ContactListContent - Rendering with contacts:', groupedContacts);
-  
   return (
-    <TableBody>
-      {groupedContacts.map(({ contact, categories: contactCategories }) => (
-        <ContactTableRow
-          key={contact.id}
-          contact={contact}
-          columnId={contactCategories[0]?.id || ''}
-          categories={categories}
-          editingContact={editingContact}
-          handleStartEdit={handleStartEdit}
-          handleSaveEdit={handleSaveEdit}
-          handleCancelEdit={handleCancelEdit}
-          setEditingContact={setEditingContact}
-          contactCategories={contactCategories}
-          onDelete={onContactDeleted}
-        />
-      ))}
-    </TableBody>
+    <Table>
+      <ContactListHeader />
+      <TableBody>
+        {allContacts.map((contact) => (
+          <ContactTableRow
+            key={contact.id}
+            contact={contact}
+            categories={categories}
+            onUpdateContact={onUpdateContact}
+          />
+        ))}
+      </TableBody>
+    </Table>
   );
 };

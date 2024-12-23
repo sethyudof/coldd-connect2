@@ -36,25 +36,23 @@ export const ColumnHeader = ({
   const rgb = hexToRgb(color);
   const gradientStyle = rgb ? {
     background: `linear-gradient(135deg, 
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.5) 0%,
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.4) 50%,
-      rgba(${rgb.r},${rgb.g},${rgb.b},0.3) 100%)`,
-    backdropFilter: 'blur(8px)',
-    WebkitBackdropFilter: 'blur(8px)',
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.25) 0%,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.2) 50%,
+      rgba(${rgb.r},${rgb.g},${rgb.b},0.15) 100%)`,
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
     boxShadow: `
-      inset 0 2px 4px rgba(255,255,255,0.2),
-      inset 0 -2px 4px rgba(0,0,0,0.1),
-      0 2px 8px rgba(0,0,0,0.05)
+      inset 0 2px 4px rgba(255,255,255,0.3),
+      inset 0 -2px 4px rgba(0,0,0,0.2),
+      0 4px 12px rgba(0,0,0,0.1)
     `,
+    border: '1px solid rgba(255,255,255,0.2)',
   } : {};
 
   return (
     <div 
-      className={`w-full rounded-t-lg ${className}`}
-      style={{ 
-        ...gradientStyle,
-        borderBottom: '1px solid rgba(255,255,255,0.15)',
-      }}
+      className={`w-full rounded-t-lg backdrop-blur-lg bg-white/5 ${className}`}
+      style={gradientStyle}
     >
       <div className="flex justify-between items-center w-full px-4 py-3">
         <h2 className="font-semibold text-white tracking-wide text-shadow">

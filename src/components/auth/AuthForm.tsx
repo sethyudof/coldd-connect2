@@ -1,77 +1,55 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
-import { AuthChangeEvent } from "@supabase/supabase-js";
+import { TrialFeatures } from "./TrialFeatures";
+import { useState } from "react";
 
-interface AuthFormProps {
-  view: 'sign_in' | 'sign_up';
-  onViewChange: (view: 'sign_in' | 'sign_up') => void;
-}
-
-export const AuthForm = ({ view, onViewChange }: AuthFormProps) => {
-  console.log("Rendering AuthForm with view:", view);
-  
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
-      if (event === 'SIGNED_IN') {
-        console.log("User signed in:", session?.user?.email);
-      } else if (event === 'SIGNED_OUT') {
-        console.log("User signed out");
-      } else {
-        console.log("Auth event:", event);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+export const AuthForm = () => {
+  const [view, setView] = useState<"sign_in" | "sign_up">("sign_in");
 
   return (
-    <Auth
-      supabaseClient={supabase}
-      appearance={{
-        theme: ThemeSupa,
-        variables: {
-          default: {
-            colors: {
-              brand: 'rgb(var(--primary))',
-              brandAccent: 'rgb(var(--primary))',
-            },
-            radii: {
-              borderRadiusButton: '0.5rem',
+    <div className="w-full max-w-[400px] mx-auto space-y-6">
+      <Auth
+        supabaseClient={supabase}
+        appearance={{
+          theme: ThemeSupa,
+          variables: {
+            default: {
+              colors: {
+                brand: "#6B46C1",
+                brandAccent: "#553C9A",
+              },
+              radii: {
+                borderRadiusButton: "8px",
+                buttonBorderRadius: "8px",
+                inputBorderRadius: "8px",
+              },
             },
           },
-        },
-        style: {
-          button: {
-            fontSize: '14px',
-            padding: '10px 15px',
+          style: {
+            button: {
+              fontSize: "16px",
+              padding: "10px 15px",
+            },
+            input: {
+              fontSize: "16px",
+            },
+            anchor: {
+              color: "#553C9A",
+            },
           },
-        },
-        className: {
-          button: 'custom-button',
-        },
-      }}
-      localization={{
-        variables: {
-          sign_up: {
-            button_label: 'Start free trial'
-          }
-        }
-      }}
-      providers={[]}
-      redirectTo={window.location.origin}
-      magicLink={false}
-      showLinks={true}
-      view={view}
-      onViewChange={({ view }) => {
-        console.log("View changed to:", view);
-        if (view === 'sign_in' || view === 'sign_up') {
-          onViewChange(view);
-        }
-      }}
-    />
+          className: {
+            button: "font-medium",
+            input: "font-normal",
+          },
+        }}
+        view={view}
+        viewChange={({ view }) => {
+          console.log("View changed to:", view);
+          setView(view as "sign_in" | "sign_up");
+        }}
+      />
+      {view === "sign_up" && <TrialFeatures />}
+    </div>
   );
 };
