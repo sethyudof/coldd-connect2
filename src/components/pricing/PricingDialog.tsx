@@ -2,93 +2,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { CreditCard } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { PricingTier } from "./PricingTier";
-
-const PRICING_TIERS = [
-  {
-    name: "Basic",
-    description: "Perfect for individuals and small teams",
-    monthly: {
-      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
-      price: "$3.99",
-    },
-    annual: {
-      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
-      price: "$35.99",
-    },
-  },
-  {
-    name: "Pro",
-    description: "Advanced features for power users",
-    monthly: {
-      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
-      price: "$6.99",
-    },
-    annual: {
-      priceId: "price_1OAjPmHVlLhqKzGZ2TlPL9Aq",
-      price: "$62.99",
-    },
-  },
-];
+import { BillingIntervalToggle } from "./BillingIntervalToggle";
+import { useSubscription } from "@/hooks/useSubscription";
+import { PRICING_TIERS } from "@/config/pricing";
 
 export const PricingDialog = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [open, setOpen] = useState(false);
-  const { toast } = useToast();
-
-  const handleSubscribe = async (priceId: string) => {
-    try {
-      if (!priceId) {
-        console.error('No priceId provided to handleSubscribe');
-        toast({
-          title: "Error",
-          description: "Invalid price configuration. Please try again later.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log('Starting subscription process with priceId:', priceId);
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        console.error('No session found');
-        toast({
-          title: "Error",
-          description: "You must be logged in to subscribe",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log('Calling create-checkout function with priceId:', priceId);
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Error from create-checkout:', error);
-        throw error;
-      }
-
-      if (data?.url) {
-        console.log('Redirecting to checkout URL:', data.url);
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start checkout process. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const { handleSubscribe } = useSubscription();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -102,26 +24,7 @@ export const PricingDialog = () => {
         <DialogHeader>
           <DialogTitle>Choose Your Plan</DialogTitle>
         </DialogHeader>
-        <div className="flex justify-center mb-6">
-          <div className="flex items-center space-x-2 bg-muted p-1 rounded-lg">
-            <Button
-              variant={isAnnual ? "outline" : "default"}
-              size="sm"
-              onClick={() => setIsAnnual(false)}
-              className="transition-colors"
-            >
-              Monthly
-            </Button>
-            <Button
-              variant={isAnnual ? "default" : "outline"}
-              size="sm"
-              onClick={() => setIsAnnual(true)}
-              className="transition-colors"
-            >
-              Annual (Save 25%)
-            </Button>
-          </div>
-        </div>
+        <BillingIntervalToggle isAnnual={isAnnual} onChange={setIsAnnual} />
         <div className="grid md:grid-cols-2 gap-4">
           {PRICING_TIERS.map((tier) => (
             <PricingTier
