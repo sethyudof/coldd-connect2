@@ -25,10 +25,14 @@ export const PRICING_TIERS = [
   },
 ];
 
-// Log price IDs on load for debugging
+// Enhanced logging for price ID debugging
 console.log('Pricing configuration loaded:', {
-  tier1Monthly: PRICING_TIERS[0].monthly.priceId,
-  tier1Annual: PRICING_TIERS[0].annual.priceId,
-  tier2Monthly: PRICING_TIERS[1].monthly.priceId,
-  tier2Annual: PRICING_TIERS[1].annual.priceId,
+  tier1: {
+    monthly: PRICING_TIERS[0].monthly.priceId,
+    annual: PRICING_TIERS[0].annual.priceId,
+  },
+  tier2: {
+    monthly: PRICING_TIERS[1].monthly.priceId,
+    annual: PRICING_TIERS[1].annual.priceId,
+  }
 });
