@@ -55,7 +55,7 @@ export const AuthForm = ({ view: initialView, onViewChange }: AuthFormProps = {}
           },
         }}
         view={view}
-        onViewChange={handleViewChange}
+        onChange={handleViewChange}
       />
       {view === "sign_up" && <TrialFeatures />}
     </div>
