@@ -19,17 +19,27 @@ export const AuthLayout = () => {
     console.log("Checking auth state...");
     supabase.auth.getSession().then(({ data: { session }}) => {
       console.log("Current session:", session);
-    });
-
-    supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth state changed:", event, session);
-      if (event === "SIGNED_IN" && session) {
+      if (session) {
+        console.log("User already logged in, redirecting to home...");
         navigate("/");
       }
     });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session);
+      if (event === "SIGNED_IN" && session) {
+        console.log("User signed in, redirecting to home...");
+        navigate("/");
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const handleViewChange = (newView: 'sign_in' | 'sign_up') => {
+    console.log("Changing view to:", newView);
     setView(newView);
   };
 
@@ -110,11 +120,13 @@ export const AuthLayout = () => {
               onError: (error: any) => {
                 console.error("Auth error:", error);
                 if (error.message?.includes('User already registered')) {
+                  console.log("User already exists, switching to sign in view");
                   toast.error("Account Already Exists", {
                     description: "Please sign in with your existing account",
                   });
                   setView('sign_in');
                 } else {
+                  console.error("Unexpected auth error:", error);
                   toast.error("Authentication Error", {
                     description: error.message || "An unexpected error occurred during authentication"
                   });
