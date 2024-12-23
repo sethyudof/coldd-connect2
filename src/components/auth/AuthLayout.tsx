@@ -83,12 +83,8 @@ export const AuthLayout = () => {
           redirectTo={window.location.origin}
           magicLink={false}
           showLinks={true}
-          {...{
-            emailPasswordlessEnabled: false,
-            magicLinkEnabled: false,
-            onViewChange: handleViewChange,
-            onError: handleError
-          }}
+          onViewChange={handleViewChange}
+          onError={handleError}
         />
       </Card>
     </div>
