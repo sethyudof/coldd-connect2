@@ -1,20 +1,17 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useSubscription = () => {
-  const { toast } = useToast();
-
   const handleSubscribe = async (priceId: string) => {
     try {
-      console.log('Starting subscription process with priceId:', priceId);
+      console.log('Starting subscription process...');
+      console.log('Price ID:', priceId);
       
       if (!priceId) {
-        console.error('No priceId provided to handleSubscribe');
-        toast({
-          title: "Error",
-          description: "Invalid price configuration. Please try again later.",
-          variant: "destructive",
+        console.error('No priceId provided');
+        toast.error("Configuration Error", {
+          description: "No price ID provided for subscription",
         });
         return;
       }
@@ -22,18 +19,19 @@ export const useSubscription = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        console.error('No session found');
-        toast({
-          title: "Error",
-          description: "You must be logged in to subscribe",
-          variant: "destructive",
+        console.error('No active session found');
+        toast.error("Authentication Required", {
+          description: "Please sign in to subscribe",
         });
         return;
       }
 
-      console.log('Calling create-checkout function with priceId:', priceId);
+      console.log('Creating checkout session for user:', session.user.id);
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
+        body: { 
+          priceId,
+          returnUrl: window.location.origin 
+        },
       });
 
       if (error) {
@@ -41,19 +39,17 @@ export const useSubscription = () => {
         throw error;
       }
 
-      if (data?.url) {
-        console.log('Redirecting to checkout URL:', data.url);
-        window.location.href = data.url;
-      } else {
-        console.error('No checkout URL received from create-checkout');
-        throw new Error('Failed to create checkout session');
+      if (!data?.url) {
+        console.error('No checkout URL received');
+        throw new Error('Failed to create checkout session - no URL returned');
       }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      toast({
-        title: "Error",
-        description: "Failed to start checkout process. Please try again.",
-        variant: "destructive",
+
+      console.log('Redirecting to checkout URL:', data.url);
+      window.location.href = data.url;
+    } catch (error: any) {
+      console.error('Subscription error:', error);
+      toast.error("Subscription Error", {
+        description: error.message || "Failed to start checkout process",
       });
     }
   };

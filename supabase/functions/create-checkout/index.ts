@@ -13,8 +13,8 @@ serve(async (req) => {
   }
 
   try {
-    const { priceId } = await req.json();
-    console.log('Received request with priceId:', priceId);
+    const { priceId, returnUrl } = await req.json();
+    console.log('Received request with:', { priceId, returnUrl });
 
     if (!priceId) {
       throw new Error('No price ID provided');
@@ -78,8 +78,8 @@ serve(async (req) => {
         },
       ],
       mode: 'subscription',
-      success_url: `${req.headers.get('origin')}/`,
-      cancel_url: `${req.headers.get('origin')}/`,
+      success_url: `${returnUrl}/`,
+      cancel_url: `${returnUrl}/`,
     });
 
     console.log('Checkout session created:', session.id);
