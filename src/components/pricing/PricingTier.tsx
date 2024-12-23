@@ -17,8 +17,7 @@ export const PricingTier = ({
   priceId,
   onSubscribe,
 }: PricingTierProps) => {
-  const isValidPriceId = priceId && priceId.trim() !== '';
-  console.log(`PricingTier ${name} - Price ID:`, priceId, 'Valid:', isValidPriceId);
+  console.log(`PricingTier ${name} - Price ID:`, priceId);
 
   return (
     <div className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors">
@@ -33,7 +32,7 @@ export const PricingTier = ({
       <Button 
         className="w-full" 
         onClick={() => onSubscribe(priceId)}
-        disabled={!isValidPriceId}
+        disabled={!priceId}
       >
         Upgrade Now
       </Button>
