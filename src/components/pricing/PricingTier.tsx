@@ -17,7 +17,12 @@ export const PricingTier = ({
   priceId,
   onSubscribe,
 }: PricingTierProps) => {
-  console.log(`PricingTier ${name} - Price ID:`, priceId);
+  console.log(`PricingTier ${name} rendering with priceId:`, priceId);
+
+  const handleSubscribe = () => {
+    console.log(`Attempting to subscribe to ${name} tier with priceId:`, priceId);
+    onSubscribe(priceId);
+  };
 
   return (
     <div className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors">
@@ -31,7 +36,7 @@ export const PricingTier = ({
       </div>
       <Button 
         className="w-full" 
-        onClick={() => onSubscribe(priceId)}
+        onClick={handleSubscribe}
         disabled={!priceId}
       >
         Upgrade Now
