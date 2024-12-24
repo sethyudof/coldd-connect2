@@ -8,11 +8,10 @@ import {
 export const PRICING_PLANS = {
   tier1: {
     name: "Tier 1",
-    description: "Perfect for getting started with contact management",
+    description: "Perfect for getting started",
     features: [
       "Up to 100 SMS reminders per month",
       "Up to 50 AI responses per month",
-      "Basic contact management",
       "Email support"
     ],
     monthly: {
@@ -30,9 +29,7 @@ export const PRICING_PLANS = {
     features: [
       "Up to 400 SMS reminders per month",
       "Unlimited AI responses",
-      "Advanced contact management",
-      "Priority email support",
-      "Dedicated account manager"
+      "Priority email support"
     ],
     monthly: {
       price: "$6.99",
