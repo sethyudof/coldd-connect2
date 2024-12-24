@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import Stripe from 'https://esm.sh/stripe@13.6.0?target=deno';
 
 const corsHeaders = {
@@ -48,24 +47,7 @@ serve(async (req) => {
       );
     }
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-    
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('Missing Supabase configuration');
-      return new Response(
-        JSON.stringify({ error: 'Server configuration error' }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
-    }
-
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
-
-    // Get auth user
+    // Get auth user from Authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('No authorization header provided');
@@ -78,62 +60,77 @@ serve(async (req) => {
       );
     }
 
+    // Extract JWT token
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    // Decode JWT to get user information
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
 
-    if (userError || !user) {
-      console.error('Error getting user:', userError);
+      const payload = JSON.parse(jsonPayload);
+      const userId = payload.sub;
+      const userEmail = payload.email;
+
+      if (!userId || !userEmail) {
+        throw new Error('Invalid token payload');
+      }
+
+      console.log('User authenticated:', { userId, userEmail });
+
+      // Initialize Stripe
+      const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+      if (!stripeSecretKey) {
+        console.error('STRIPE_SECRET_KEY not configured');
+        return new Response(
+          JSON.stringify({ error: 'Stripe configuration error' }),
+          { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
+
+      console.log('Creating Stripe instance...');
+      const stripe = new Stripe(stripeSecretKey, {
+        apiVersion: '2023-10-16',
+        httpClient: Stripe.createFetchHttpClient(),
+      });
+
+      // Create checkout session
+      console.log('Creating Stripe checkout session...');
+      const session = await stripe.checkout.sessions.create({
+        customer_email: userEmail,
+        line_items: [{ price: priceId, quantity: 1 }],
+        mode: 'subscription',
+        success_url: `${returnUrl || req.headers.get('origin')}/`,
+        cancel_url: `${returnUrl || req.headers.get('origin')}/`,
+        metadata: {
+          user_id: userId,
+        },
+      });
+
+      console.log('Checkout session created:', session.id);
+
       return new Response(
-        JSON.stringify({ error: 'Error getting user' }),
+        JSON.stringify({ url: session.url }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
         { 
           status: 401, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       );
     }
-
-    console.log('User authenticated:', user.id);
-
-    // Initialize Stripe
-    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
-    if (!stripeSecretKey) {
-      console.error('STRIPE_SECRET_KEY not configured');
-      return new Response(
-        JSON.stringify({ error: 'Stripe configuration error' }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
-    }
-
-    console.log('Creating Stripe instance...');
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2023-10-16',
-      httpClient: Stripe.createFetchHttpClient(),
-    });
-
-    // Create checkout session
-    console.log('Creating Stripe checkout session...');
-    const session = await stripe.checkout.sessions.create({
-      customer_email: user.email,
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: 'subscription',
-      success_url: `${returnUrl || req.headers.get('origin')}/`,
-      cancel_url: `${returnUrl || req.headers.get('origin')}/`,
-      metadata: {
-        user_id: user.id,
-      },
-    });
-
-    console.log('Checkout session created:', session.id);
-
-    return new Response(
-      JSON.stringify({ url: session.url }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
-    );
   } catch (error) {
     console.error('Error in create-checkout function:', error);
     let errorMessage = 'Internal server error';
