@@ -33,21 +33,26 @@ serve(async (req) => {
       throw new Error('Stripe configuration error');
     }
 
-    // Log the available price IDs from environment
-    console.log('Available price IDs:', {
-      tier1Monthly: Deno.env.get('VITE_STRIPE_TIER1_MONTHLY_PRICE_ID'),
-      tier1Annual: Deno.env.get('VITE_STRIPE_TIER1_ANNUAL_PRICE_ID'),
-      tier2Monthly: Deno.env.get('VITE_STRIPE_TIER2_MONTHLY_PRICE_ID'),
-      tier2Annual: Deno.env.get('VITE_STRIPE_TIER2_ANNUAL_PRICE_ID')
+    // Get the actual Stripe price IDs from Supabase secrets
+    const tier1MonthlyPriceId = Deno.env.get('STRIPE_TIER1_MONTHLY_PRICE_ID');
+    const tier1AnnualPriceId = Deno.env.get('STRIPE_TIER1_ANNUAL_PRICE_ID');
+    const tier2MonthlyPriceId = Deno.env.get('STRIPE_TIER2_MONTHLY_PRICE_ID');
+    const tier2AnnualPriceId = Deno.env.get('STRIPE_TIER2_ANNUAL_PRICE_ID');
+
+    console.log('Available Stripe price IDs:', {
+      tier1Monthly: tier1MonthlyPriceId,
+      tier1Annual: tier1AnnualPriceId,
+      tier2Monthly: tier2MonthlyPriceId,
+      tier2Annual: tier2AnnualPriceId
     });
 
     // Validate priceId against available options
     const validPriceIds = [
-      Deno.env.get('VITE_STRIPE_TIER1_MONTHLY_PRICE_ID'),
-      Deno.env.get('VITE_STRIPE_TIER1_ANNUAL_PRICE_ID'),
-      Deno.env.get('VITE_STRIPE_TIER2_MONTHLY_PRICE_ID'),
-      Deno.env.get('VITE_STRIPE_TIER2_ANNUAL_PRICE_ID')
-    ];
+      tier1MonthlyPriceId,
+      tier1AnnualPriceId,
+      tier2MonthlyPriceId,
+      tier2AnnualPriceId
+    ].filter(Boolean); // Remove any undefined values
 
     if (!validPriceIds.includes(priceId)) {
       console.error('Invalid price ID provided:', priceId);
