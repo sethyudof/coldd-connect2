@@ -9,13 +9,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Log every request
-  console.log('Request received:', {
-    method: req.method,
-    url: req.url,
-    headers: Object.fromEntries(req.headers.entries())
-  });
-
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log('Handling CORS preflight request');
@@ -25,61 +18,19 @@ serve(async (req) => {
     });
   }
 
-  if (req.method !== 'POST') {
-    console.log(`Invalid method: ${req.method}`);
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }), 
-      { 
-        status: 405,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-  }
-
   try {
     // Parse request body
     const body = await req.text();
     console.log('Raw request body:', body);
     
-    const requestData = JSON.parse(body);
-    console.log('Parsed request data:', requestData);
-    
-    const { priceId, returnUrl } = requestData;
-    console.log('Extracted values:', { priceId, returnUrl });
-
-    if (!priceId) {
-      console.error('No priceId provided in request');
-      return new Response(
-        JSON.stringify({ error: 'Price ID is required' }),
-        { 
-          status: 400,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-    }
+    const { priceId, returnUrl } = JSON.parse(body);
+    console.log('Processing checkout request with:', { priceId, returnUrl });
 
     // Initialize Stripe
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
-    console.log('Stripe secret key present:', !!stripeSecretKey);
-    
     if (!stripeSecretKey) {
-      console.error('STRIPE_SECRET_KEY not configured');
-      return new Response(
-        JSON.stringify({ error: 'Stripe configuration error' }),
-        { 
-          status: 500,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      console.error('STRIPE_SECRET_KEY not found in environment');
+      throw new Error('Stripe configuration error');
     }
 
     const stripe = new Stripe(stripeSecretKey, {
@@ -89,26 +40,13 @@ serve(async (req) => {
 
     // Get auth user from Authorization header
     const authHeader = req.headers.get('Authorization');
-    console.log('Auth header present:', !!authHeader);
-    
     if (!authHeader) {
       console.error('No authorization header provided');
-      return new Response(
-        JSON.stringify({ error: 'Authentication required' }),
-        { 
-          status: 401,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      throw new Error('Authentication required');
     }
 
     // Extract JWT token and decode payload
     const token = authHeader.replace('Bearer ', '');
-    console.log('Token extracted from header');
-    
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -116,7 +54,7 @@ serve(async (req) => {
     }).join(''));
 
     const payload = JSON.parse(jsonPayload);
-    console.log('Token payload parsed:', { 
+    console.log('Token payload:', { 
       sub: payload.sub ? 'present' : 'missing',
       email: payload.email ? 'present' : 'missing'
     });
@@ -126,22 +64,23 @@ serve(async (req) => {
 
     if (!userId || !userEmail) {
       console.error('Invalid token payload:', { userId, userEmail });
-      return new Response(
-        JSON.stringify({ error: 'Invalid authentication token' }),
-        { 
-          status: 401,
-          headers: {
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      throw new Error('Invalid authentication token');
     }
 
-    console.log('Creating Stripe checkout session...');
+    console.log('Creating Stripe checkout session with:', {
+      customerEmail: userEmail,
+      priceId: priceId,
+      userId: userId,
+      returnUrl: returnUrl
+    });
+
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       customer_email: userEmail,
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{ 
+        price: priceId,
+        quantity: 1 
+      }],
       mode: 'subscription',
       success_url: `${returnUrl || req.headers.get('origin')}/`,
       cancel_url: `${returnUrl || req.headers.get('origin')}/`,
@@ -150,7 +89,11 @@ serve(async (req) => {
       },
     });
 
-    console.log('Checkout session created:', session.id);
+    console.log('Checkout session created successfully:', { 
+      sessionId: session.id,
+      url: session.url 
+    });
+
     return new Response(
       JSON.stringify({ url: session.url }),
       { 
@@ -163,15 +106,23 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error in create-checkout function:', error);
-    
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      type: error.type,
+      raw: error.raw,
+      statusCode: error.statusCode,
+      requestId: error.requestId
+    });
+
     return new Response(
       JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Internal server error',
-        details: error instanceof Error ? error.stack : undefined
+        error: error.message,
+        details: error.raw || error.stack
       }),
       { 
-        status: 500,
+        status: error.statusCode || 500,
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
