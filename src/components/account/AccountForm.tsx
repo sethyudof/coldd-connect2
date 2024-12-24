@@ -8,6 +8,7 @@ export const AccountForm = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [smsEnabled, setSmsEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -17,6 +18,7 @@ export const AccountForm = () => {
 
   const loadUserProfile = async () => {
     try {
+      setIsLoading(true);
       console.log("Fetching user data...");
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
@@ -26,7 +28,7 @@ export const AccountForm = () => {
       }
 
       if (user) {
-        console.log("User found, setting email:", user.email);
+        console.log("User found:", user);
         setEmail(user.email || "");
         
         console.log("Fetching profile data for user:", user.id);
@@ -58,8 +60,14 @@ export const AccountForm = () => {
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <div className="text-center py-4">Loading profile...</div>;
+  }
 
   return (
     <div className="space-y-6">
