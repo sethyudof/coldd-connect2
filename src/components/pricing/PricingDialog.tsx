@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreditCard } from "lucide-react";
 import { useState } from "react";
@@ -51,6 +51,9 @@ export const PricingDialog = () => {
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Choose Your Plan</DialogTitle>
+          <DialogDescription>
+            Select the plan that best fits your needs. All plans include our core features.
+          </DialogDescription>
         </DialogHeader>
         <BillingIntervalToggle isAnnual={isAnnual} onChange={setIsAnnual} />
         <div className="grid md:grid-cols-2 gap-4">
