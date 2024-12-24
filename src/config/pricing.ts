@@ -1,3 +1,4 @@
+// Using the VITE_ prefixed environment variables that are already set
 const TIER1_MONTHLY = import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID;
 const TIER1_ANNUAL = import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID;
 const TIER2_MONTHLY = import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID;
