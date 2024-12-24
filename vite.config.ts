@@ -19,12 +19,4 @@ export default defineConfig(({ mode }) => ({
     },
   },
   envPrefix: ['VITE_'],
-  define: {
-    'process.env': {
-      VITE_STRIPE_TIER1_MONTHLY_PRICE_ID: JSON.stringify(process.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID),
-      VITE_STRIPE_TIER1_ANNUAL_PRICE_ID: JSON.stringify(process.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID),
-      VITE_STRIPE_TIER2_MONTHLY_PRICE_ID: JSON.stringify(process.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID),
-      VITE_STRIPE_TIER2_ANNUAL_PRICE_ID: JSON.stringify(process.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID),
-    },
-  },
 }))
