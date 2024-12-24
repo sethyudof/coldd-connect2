@@ -108,18 +108,24 @@ export type Database = {
           id: string
           phone_number: string | null
           phone_verified: boolean | null
+          sms_count_current_month: number | null
+          sms_count_last_reset: string | null
         }
         Insert: {
           created_at?: string
           id: string
           phone_number?: string | null
           phone_verified?: boolean | null
+          sms_count_current_month?: number | null
+          sms_count_last_reset?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           phone_number?: string | null
           phone_verified?: boolean | null
+          sms_count_current_month?: number | null
+          sms_count_last_reset?: string | null
         }
         Relationships: []
       }
@@ -185,7 +191,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reset_monthly_sms_count: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       subscription_status: "active" | "past_due" | "canceled" | "incomplete"
