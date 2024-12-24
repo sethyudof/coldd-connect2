@@ -13,44 +13,37 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     console.log('Handling CORS preflight request');
     return new Response(null, { 
-      status: 204, 
-      headers: corsHeaders 
+      status: 204,
+      headers: {
+        ...corsHeaders,
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      }
     });
   }
 
   try {
     // Parse request body
-    const { priceId, returnUrl } = await req.json();
+    const requestData = await req.json();
+    const { priceId, returnUrl } = requestData;
     console.log('Request payload:', { priceId, returnUrl });
 
-    if (!priceId) {
-      console.error('Missing priceId in request');
-      return new Response(
-        JSON.stringify({ error: 'Price ID is required' }),
-        { 
-          status: 400, 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          } 
-        }
-      );
+    // Initialize Stripe
+    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+    if (!stripeSecretKey) {
+      console.error('STRIPE_SECRET_KEY not configured');
+      throw new Error('Stripe configuration error');
     }
+
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
 
     // Get auth user from Authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       console.error('No authorization header provided');
-      return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { 
-          status: 401, 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          } 
-        }
-      );
+      throw new Error('Authentication required');
     }
 
     // Extract JWT token and decode payload
@@ -67,42 +60,9 @@ serve(async (req) => {
 
     if (!userId || !userEmail) {
       console.error('Invalid token payload:', { userId, userEmail });
-      return new Response(
-        JSON.stringify({ error: 'Invalid authentication token' }),
-        { 
-          status: 401, 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          } 
-        }
-      );
+      throw new Error('Invalid authentication token');
     }
 
-    console.log('User authenticated:', { userId, userEmail });
-
-    // Initialize Stripe
-    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
-    if (!stripeSecretKey) {
-      console.error('STRIPE_SECRET_KEY not configured');
-      return new Response(
-        JSON.stringify({ error: 'Stripe configuration error' }),
-        { 
-          status: 500, 
-          headers: { 
-            ...corsHeaders,
-            'Content-Type': 'application/json'
-          } 
-        }
-      );
-    }
-
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2023-10-16',
-      httpClient: Stripe.createFetchHttpClient(),
-    });
-
-    // Create checkout session
     console.log('Creating Stripe checkout session...');
     const session = await stripe.checkout.sessions.create({
       customer_email: userEmail,
@@ -123,22 +83,24 @@ serve(async (req) => {
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
-        } 
+        }
       }
     );
 
   } catch (error) {
     console.error('Error in create-checkout function:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    const statusCode = error instanceof Error && error.message === 'Authentication required' ? 401 : 500;
+    
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Internal server error'
-      }),
+      JSON.stringify({ error: errorMessage }),
       { 
-        status: 500, 
+        status: statusCode,
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
-        } 
+        }
       }
     );
   }
