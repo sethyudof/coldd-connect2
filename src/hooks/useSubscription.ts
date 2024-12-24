@@ -2,6 +2,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+interface CheckoutResponse {
+  url: string;
+}
+
 export const useSubscription = () => {
   const handleSubscribe = async (priceId: string) => {
     try {
@@ -28,7 +32,7 @@ export const useSubscription = () => {
       }
 
       console.log('Creating checkout session for user:', session.user.id);
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error } = await supabase.functions.invoke<CheckoutResponse>('create-checkout', {
         body: { 
           priceId,
           returnUrl: window.location.origin 
