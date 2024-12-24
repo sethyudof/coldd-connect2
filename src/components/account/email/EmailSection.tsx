@@ -21,17 +21,16 @@ export const EmailSection = ({ initialEmail }: { initialEmail: string }) => {
         throw new Error("Please enter a valid email address");
       }
 
-      const { error } = await supabase.auth.updateUser({ 
-        email: email,
-        options: {
-          emailRedirectTo: window.location.origin
-        }
+      const { data, error } = await supabase.auth.updateUser({
+        email: email.trim()
       });
 
       if (error) {
         console.error("Error updating email:", error);
         throw error;
       }
+
+      console.log("Email update response:", data);
 
       toast({
         title: "Verification email sent",
