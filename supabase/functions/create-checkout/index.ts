@@ -21,10 +21,7 @@ serve(async (req) => {
     console.log('Handling CORS preflight request');
     return new Response(null, { 
       status: 204,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      }
+      headers: corsHeaders
     });
   }
 
