@@ -5,14 +5,15 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Max-Age': '86400', // 24 hours cache for preflight requests
+  'Access-Control-Max-Age': '86400',
 };
 
 serve(async (req) => {
+  // Log every request
   console.log('Request received:', {
     method: req.method,
-    headers: Object.fromEntries(req.headers.entries()),
-    url: req.url
+    url: req.url,
+    headers: Object.fromEntries(req.headers.entries())
   });
 
   // Handle CORS preflight requests
@@ -22,6 +23,20 @@ serve(async (req) => {
       status: 204,
       headers: corsHeaders
     });
+  }
+
+  if (req.method !== 'POST') {
+    console.log(`Invalid method: ${req.method}`);
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed' }), 
+      { 
+        status: 405,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
   }
 
   try {
@@ -41,7 +56,16 @@ serve(async (req) => {
     
     if (!stripeSecretKey) {
       console.error('STRIPE_SECRET_KEY not configured');
-      throw new Error('Stripe configuration error');
+      return new Response(
+        JSON.stringify({ error: 'Stripe configuration error' }),
+        { 
+          status: 500,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
 
     const stripe = new Stripe(stripeSecretKey, {
@@ -55,7 +79,16 @@ serve(async (req) => {
     
     if (!authHeader) {
       console.error('No authorization header provided');
-      throw new Error('Authentication required');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { 
+          status: 401,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
 
     // Extract JWT token and decode payload
@@ -79,7 +112,16 @@ serve(async (req) => {
 
     if (!userId || !userEmail) {
       console.error('Invalid token payload:', { userId, userEmail });
-      throw new Error('Invalid authentication token');
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { 
+          status: 401,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
     }
 
     console.log('Creating Stripe checkout session...');
@@ -109,13 +151,13 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in create-checkout function:', error);
     
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-    const statusCode = error instanceof Error && error.message === 'Authentication required' ? 401 : 500;
-    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Internal server error',
+        details: error instanceof Error ? error.stack : undefined
+      }),
       { 
-        status: statusCode,
+        status: 500,
         headers: { 
           ...corsHeaders,
           'Content-Type': 'application/json'
