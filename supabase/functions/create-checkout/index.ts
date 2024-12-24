@@ -53,6 +53,20 @@ serve(async (req) => {
     const { priceId, returnUrl } = requestData;
     console.log('Extracted values:', { priceId, returnUrl });
 
+    if (!priceId) {
+      console.error('No priceId provided in request');
+      return new Response(
+        JSON.stringify({ error: 'Price ID is required' }),
+        { 
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    }
+
     // Initialize Stripe
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     console.log('Stripe secret key present:', !!stripeSecretKey);
