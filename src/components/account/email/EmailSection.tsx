@@ -7,26 +7,45 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const EmailSection = ({ initialEmail }: { initialEmail: string }) => {
   const [email, setEmail] = useState(initialEmail);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleUpdateEmail = async () => {
     try {
-      console.log("Updating email to:", email);
-      const { error } = await supabase.auth.updateUser({ email });
+      setIsLoading(true);
+      console.log("Attempting to update email to:", email);
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        throw new Error("Please enter a valid email address");
+      }
+
+      const { error } = await supabase.auth.updateUser({ 
+        email: email,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
+      });
+
       if (error) {
         console.error("Error updating email:", error);
         throw error;
       }
+
       toast({
-        title: "Email updated",
+        title: "Verification email sent",
         description: "Please check your new email for a confirmation link.",
       });
     } catch (error: any) {
+      console.error("Error in handleUpdateEmail:", error);
       toast({
         title: "Error updating email",
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -39,8 +58,12 @@ export const EmailSection = ({ initialEmail }: { initialEmail: string }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
+          placeholder="Enter your email"
+          disabled={isLoading}
         />
-        <Button onClick={handleUpdateEmail}>Update</Button>
+        <Button onClick={handleUpdateEmail} disabled={isLoading}>
+          {isLoading ? "Updating..." : "Update"}
+        </Button>
       </div>
     </div>
   );
