@@ -7,17 +7,18 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log('Starting create-checkout function');
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request');
     return new Response(null, { 
-      status: 200,
+      status: 204, 
       headers: corsHeaders 
     });
   }
 
   try {
-    console.log('Starting checkout session creation...');
-    
     // Parse request body
     const { priceId, returnUrl } = await req.json();
     console.log('Request payload:', { priceId, returnUrl });
@@ -28,7 +29,10 @@ serve(async (req) => {
         JSON.stringify({ error: 'Price ID is required' }),
         { 
           status: 400, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          } 
         }
       );
     }
@@ -41,7 +45,10 @@ serve(async (req) => {
         JSON.stringify({ error: 'No authorization header' }),
         { 
           status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          } 
         }
       );
     }
@@ -59,12 +66,15 @@ serve(async (req) => {
     const userEmail = payload.email;
 
     if (!userId || !userEmail) {
-      console.error('Invalid token payload');
+      console.error('Invalid token payload:', { userId, userEmail });
       return new Response(
         JSON.stringify({ error: 'Invalid authentication token' }),
         { 
           status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          } 
         }
       );
     }
@@ -79,7 +89,10 @@ serve(async (req) => {
         JSON.stringify({ error: 'Stripe configuration error' }),
         { 
           status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          } 
         }
       );
     }
@@ -107,7 +120,10 @@ serve(async (req) => {
       JSON.stringify({ url: session.url }),
       { 
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
       }
     );
 
@@ -115,12 +131,14 @@ serve(async (req) => {
     console.error('Error in create-checkout function:', error);
     return new Response(
       JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Internal server error',
-        details: error instanceof Error ? error.stack : String(error)
+        error: error instanceof Error ? error.message : 'Internal server error'
       }),
       { 
         status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        } 
       }
     );
   }
