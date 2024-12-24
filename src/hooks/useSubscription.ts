@@ -28,12 +28,14 @@ export const useSubscription = () => {
       }
 
       console.log('Creating checkout session for user:', session.user.id);
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const { data, error, status } = await supabase.functions.invoke('create-checkout', {
         body: { 
           priceId,
           returnUrl: window.location.origin 
         },
       });
+
+      console.log('Checkout response:', { data, error, status });
 
       if (error) {
         console.error('Error from create-checkout:', error);
