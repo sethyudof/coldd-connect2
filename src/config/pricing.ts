@@ -1,28 +1,19 @@
-// Log all environment variables to see what's available
-console.log('Loading pricing configuration...');
-
-// Using the VITE_ prefixed environment variables
-const TIER1_MONTHLY = import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID;
-const TIER1_ANNUAL = import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID;
-const TIER2_MONTHLY = import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID;
-const TIER2_ANNUAL = import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID;
-
-console.log('Stripe Price IDs loaded:', {
-  TIER1_MONTHLY,
+import {
   TIER1_ANNUAL,
-  TIER2_MONTHLY,
+  TIER1_MONTHLY,
   TIER2_ANNUAL,
-});
+  TIER2_MONTHLY,
+} from "@/lib/utils";
 
-export const PRICING_TIERS = [
-  {
-    name: "Pro",
-    description: "Perfect for individuals who want to stay connected",
+export const PRICING_PLANS = {
+  tier1: {
+    name: "Tier 1",
+    description: "Perfect for getting started with contact management",
     features: [
       "Up to 100 SMS reminders per month",
-      "Smart contact categorization",
-      "Customizable reminder intervals",
-      "Priority support"
+      "Up to 50 AI responses per month",
+      "Basic contact management",
+      "Email support"
     ],
     monthly: {
       price: "$3.99",
@@ -33,13 +24,14 @@ export const PRICING_TIERS = [
       priceId: TIER1_ANNUAL,
     },
   },
-  {
-    name: "Team",
-    description: "Ideal for small teams and businesses",
+  tier2: {
+    name: "Tier 2",
+    description: "For power users who need more features",
     features: [
       "Up to 400 SMS reminders per month",
-      "All Pro features included",
-      "Advanced analytics",
+      "Unlimited AI responses",
+      "Advanced contact management",
+      "Priority email support",
       "Dedicated account manager"
     ],
     monthly: {
@@ -51,4 +43,4 @@ export const PRICING_TIERS = [
       priceId: TIER2_ANNUAL,
     },
   },
-];
+};
