@@ -20,11 +20,11 @@ export const PRICING_TIERS = [
     description: "Perfect for individuals who want to stay connected",
     monthly: {
       price: "$3.99",
-      priceId: TIER1_MONTHLY,
+      priceId: TIER1_MONTHLY || '',
     },
     annual: {
       price: "$39.99",
-      priceId: TIER1_ANNUAL,
+      priceId: TIER1_ANNUAL || '',
     },
   },
   {
@@ -32,11 +32,11 @@ export const PRICING_TIERS = [
     description: "Ideal for small teams and businesses",
     monthly: {
       price: "$9.99",
-      priceId: TIER2_MONTHLY,
+      priceId: TIER2_MONTHLY || '',
     },
     annual: {
       price: "$99.99",
-      priceId: TIER2_ANNUAL,
+      priceId: TIER2_ANNUAL || '',
     },
   },
 ];

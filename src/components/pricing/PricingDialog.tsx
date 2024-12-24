@@ -33,7 +33,8 @@ export const PricingDialog = () => {
     }
   };
 
-  console.log('PricingDialog rendering with env vars:', {
+  // Log environment variables and price IDs being used
+  console.log('PricingDialog - Environment variables:', {
     TIER1_MONTHLY: import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID,
     TIER1_ANNUAL: import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID,
     TIER2_MONTHLY: import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID,
