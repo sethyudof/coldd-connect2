@@ -44,3 +44,9 @@ export const PRICING_PLANS = {
     },
   },
 };
+
+// Export an array version for the pricing dialog
+export const PRICING_TIERS = [
+  PRICING_PLANS.tier1,
+  PRICING_PLANS.tier2,
+];
