@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const initialContacts: ContactsState = {
   coffee: [],
-  outing: [],
+  outing: [], // Outreach
   lunch: [],
   dinner: [],
   drinks: [],
@@ -64,7 +64,7 @@ export const useContacts = () => {
 
       const transformedContacts: ContactsState = {
         coffee: [],
-        outing: [],
+        outing: [], // Outreach
         lunch: [],
         dinner: [],
         drinks: [],
@@ -147,7 +147,7 @@ export const useContacts = () => {
 
 export const COLDD_COLUMNS = {
   coffee: { title: "Coffee", color: "#8B4513" },
-  outing: { title: "Outing", color: "#2F855A" },
+  outing: { title: "Outreach", color: "#2F855A" },
   lunch: { title: "Lunch", color: "#DD6B20" },
   dinner: { title: "Dinner", color: "#C53030" },
   drinks: { title: "Drinks", color: "#2B6CB0" },

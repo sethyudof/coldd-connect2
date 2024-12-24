@@ -30,7 +30,7 @@ export default {
         },
         coldd: {
           coffee: "#8B4513",
-          outing: "#2F855A",
+          outing: "#2F855A", // Outreach
           lunch: "#DD6B20",
           dinner: "#C53030",
           drinks: "#2B6CB0",
