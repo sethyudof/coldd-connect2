@@ -1,11 +1,11 @@
 // Log all environment variables to see what's available
 console.log('Loading pricing configuration...');
 
-// Using the environment variables without VITE_ prefix to match Edge Function
-const TIER1_MONTHLY = import.meta.env.STRIPE_TIER1_MONTHLY_PRICE_ID;
-const TIER1_ANNUAL = import.meta.env.STRIPE_TIER1_ANNUAL_PRICE_ID;
-const TIER2_MONTHLY = import.meta.env.STRIPE_TIER2_MONTHLY_PRICE_ID;
-const TIER2_ANNUAL = import.meta.env.STRIPE_TIER2_ANNUAL_PRICE_ID;
+// Using the VITE_ prefixed environment variables
+const TIER1_MONTHLY = import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID;
+const TIER1_ANNUAL = import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID;
+const TIER2_MONTHLY = import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID;
+const TIER2_ANNUAL = import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID;
 
 console.log('Stripe Price IDs loaded:', {
   TIER1_MONTHLY,
