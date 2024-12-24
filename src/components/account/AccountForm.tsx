@@ -14,39 +14,69 @@ export const AccountForm = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log("AccountForm mounted, loading user profile...");
     loadUserProfile();
   }, []);
 
   const loadUserProfile = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setEmail(user.email || "");
+    try {
+      console.log("Fetching user data...");
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('phone_number, phone_verified')
-        .eq('id', user.id)
-        .single();
-      
-      if (profile) {
-        setPhone(profile.phone_number || "");
-        setSmsEnabled(profile.phone_verified || false);
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        throw userError;
       }
+
+      if (user) {
+        console.log("User found, setting email:", user.email);
+        setEmail(user.email || "");
+        
+        console.log("Fetching profile data for user:", user.id);
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('phone_number, phone_verified')
+          .eq('id', user.id)
+          .single();
+        
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+          throw profileError;
+        }
+        
+        if (profile) {
+          console.log("Profile found:", profile);
+          setPhone(profile.phone_number || "");
+          setSmsEnabled(profile.phone_verified || false);
+        }
+      }
+    } catch (error: any) {
+      console.error("Error in loadUserProfile:", error);
+      toast({
+        title: "Error loading profile",
+        description: error.message,
+        variant: "destructive",
+      });
     }
   };
 
   const handleUpdateEmail = async () => {
-    const { error } = await supabase.auth.updateUser({ email });
-    if (error) {
+    try {
+      console.log("Updating email to:", email);
+      const { error } = await supabase.auth.updateUser({ email });
+      if (error) {
+        console.error("Error updating email:", error);
+        throw error;
+      }
+      toast({
+        title: "Email updated",
+        description: "Please check your new email for a confirmation link.",
+      });
+    } catch (error: any) {
       toast({
         title: "Error updating email",
         description: error.message,
         variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Email updated",
-        description: "Please check your new email for a confirmation link.",
       });
     }
   };
@@ -59,6 +89,7 @@ export const AccountForm = () => {
     if (!user) return;
 
     try {
+      console.log("Initiating phone verification for:", phone);
       const response = await supabase.functions.invoke('verify-phone', {
         body: { phone },
       });
@@ -73,12 +104,14 @@ export const AccountForm = () => {
       const code = prompt("Please enter the verification code sent to your phone:");
       if (!code) return;
 
+      console.log("Verifying phone code...");
       const verifyResponse = await supabase.functions.invoke('verify-phone-code', {
         body: { phone, code },
       });
 
       if (verifyResponse.error) throw new Error(verifyResponse.error.message);
 
+      console.log("Updating profile with verified phone...");
       await supabase
         .from('profiles')
         .update({
@@ -92,7 +125,11 @@ export const AccountForm = () => {
         title: "Phone verified",
         description: "Your phone number has been verified successfully.",
       });
+      
+      // Reload profile data after successful verification
+      await loadUserProfile();
     } catch (error: any) {
+      console.error("Error in phone verification:", error);
       toast({
         title: "Error verifying phone",
         description: error.message,
