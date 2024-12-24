@@ -24,6 +24,11 @@ export const PricingTier = ({
     onSubscribe(priceId);
   };
 
+  const isDisabled = !priceId;
+  if (isDisabled) {
+    console.log(`${name} tier button is disabled due to missing priceId`);
+  }
+
   return (
     <div className="border rounded-lg p-6 space-y-4 hover:border-primary transition-colors">
       <h3 className="text-lg font-semibold">{name}</h3>
@@ -37,9 +42,9 @@ export const PricingTier = ({
       <Button 
         className="w-full" 
         onClick={handleSubscribe}
-        disabled={!priceId}
+        disabled={isDisabled}
       >
-        Upgrade Now
+        {isDisabled ? 'Price Not Configured' : 'Upgrade Now'}
       </Button>
     </div>
   );
