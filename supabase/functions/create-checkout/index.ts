@@ -16,7 +16,7 @@ serve(async (req) => {
   try {
     console.log('Starting checkout session creation...');
     
-    // Parse request body with timeout
+    // Parse request body
     const bodyText = await req.text();
     console.log('Raw request body:', bodyText);
     
@@ -63,13 +63,7 @@ serve(async (req) => {
       );
     }
 
-    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false,
-      },
-    });
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
     // Get auth user
     const authHeader = req.headers.get('Authorization');
