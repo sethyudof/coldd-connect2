@@ -1,5 +1,5 @@
 // Log all environment variables to see what's available
-console.log('All environment variables:', import.meta.env);
+console.log('Loading pricing configuration...');
 
 // Using the VITE_ prefixed environment variables
 const TIER1_MONTHLY = import.meta.env.VITE_STRIPE_TIER1_MONTHLY_PRICE_ID;
@@ -7,7 +7,7 @@ const TIER1_ANNUAL = import.meta.env.VITE_STRIPE_TIER1_ANNUAL_PRICE_ID;
 const TIER2_MONTHLY = import.meta.env.VITE_STRIPE_TIER2_MONTHLY_PRICE_ID;
 const TIER2_ANNUAL = import.meta.env.VITE_STRIPE_TIER2_ANNUAL_PRICE_ID;
 
-console.log('Individual price IDs:', {
+console.log('Stripe Price IDs loaded:', {
   TIER1_MONTHLY,
   TIER1_ANNUAL,
   TIER2_MONTHLY,
