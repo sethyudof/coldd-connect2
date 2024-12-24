@@ -33,6 +33,28 @@ serve(async (req) => {
       throw new Error('Stripe configuration error');
     }
 
+    // Log the available price IDs from environment
+    console.log('Available price IDs:', {
+      tier1Monthly: Deno.env.get('VITE_STRIPE_TIER1_MONTHLY_PRICE_ID'),
+      tier1Annual: Deno.env.get('VITE_STRIPE_TIER1_ANNUAL_PRICE_ID'),
+      tier2Monthly: Deno.env.get('VITE_STRIPE_TIER2_MONTHLY_PRICE_ID'),
+      tier2Annual: Deno.env.get('VITE_STRIPE_TIER2_ANNUAL_PRICE_ID')
+    });
+
+    // Validate priceId against available options
+    const validPriceIds = [
+      Deno.env.get('VITE_STRIPE_TIER1_MONTHLY_PRICE_ID'),
+      Deno.env.get('VITE_STRIPE_TIER1_ANNUAL_PRICE_ID'),
+      Deno.env.get('VITE_STRIPE_TIER2_MONTHLY_PRICE_ID'),
+      Deno.env.get('VITE_STRIPE_TIER2_ANNUAL_PRICE_ID')
+    ];
+
+    if (!validPriceIds.includes(priceId)) {
+      console.error('Invalid price ID provided:', priceId);
+      console.log('Valid price IDs are:', validPriceIds);
+      throw new Error('Invalid price ID');
+    }
+
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
