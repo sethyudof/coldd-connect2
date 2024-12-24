@@ -16,9 +16,26 @@ serve(async (req) => {
   try {
     console.log('Starting checkout session creation...');
     
-    // Parse request body
-    const { priceId, returnUrl } = await req.json();
-    console.log('Request payload:', { priceId, returnUrl });
+    // Parse request body with timeout
+    const bodyText = await req.text();
+    console.log('Raw request body:', bodyText);
+    
+    let priceId, returnUrl;
+    try {
+      const body = JSON.parse(bodyText);
+      priceId = body.priceId;
+      returnUrl = body.returnUrl;
+      console.log('Parsed request payload:', { priceId, returnUrl });
+    } catch (e) {
+      console.error('Error parsing request body:', e);
+      return new Response(
+        JSON.stringify({ error: 'Invalid request body' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
     if (!priceId) {
       console.error('Missing priceId in request');
@@ -32,17 +49,27 @@ serve(async (req) => {
     }
 
     // Initialize Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-          detectSessionInUrl: false,
-        },
-      }
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase configuration');
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    });
 
     // Get auth user
     const authHeader = req.headers.get('Authorization');
@@ -86,6 +113,7 @@ serve(async (req) => {
       );
     }
 
+    console.log('Creating Stripe instance...');
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
@@ -114,10 +142,20 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in create-checkout function:', error);
+    let errorMessage = 'Internal server error';
+    let errorDetails = '';
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetails = error.stack || error.toString();
+    } else {
+      errorDetails = String(error);
+    }
+    
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Internal server error',
-        details: error.toString()
+        error: errorMessage,
+        details: errorDetails
       }),
       { 
         status: 500, 
