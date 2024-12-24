@@ -16,9 +16,9 @@ export const PricingDialog = () => {
   const handleSubscription = async (priceId: string) => {
     try {
       if (!priceId) {
-        console.error('Invalid price ID:', priceId);
+        console.error('No priceId provided');
         toast.error("Configuration Error", {
-          description: "Invalid price configuration. Please try again later.",
+          description: "Invalid price configuration. Please contact support.",
         });
         return;
       }
