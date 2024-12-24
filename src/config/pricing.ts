@@ -29,7 +29,7 @@ export const PRICING_TIERS = [
       priceId: TIER1_MONTHLY,
     },
     annual: {
-      price: "$39.99",
+      price: "$35.99",
       priceId: TIER1_ANNUAL,
     },
   },
@@ -43,11 +43,11 @@ export const PRICING_TIERS = [
       "Dedicated account manager"
     ],
     monthly: {
-      price: "$9.99",
+      price: "$6.99",
       priceId: TIER2_MONTHLY,
     },
     annual: {
-      price: "$99.99",
+      price: "$62.99",
       priceId: TIER2_ANNUAL,
     },
   },
