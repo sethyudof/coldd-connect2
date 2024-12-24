@@ -34,7 +34,7 @@ export const AccountForm = () => {
           .from('profiles')
           .select('phone_number, phone_verified')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (profileError) {
           console.error("Error fetching profile:", profileError);
@@ -45,6 +45,10 @@ export const AccountForm = () => {
           console.log("Profile found:", profile);
           setPhone(profile.phone_number || "");
           setSmsEnabled(profile.phone_verified || false);
+        } else {
+          console.log("No profile found for user");
+          setPhone("");
+          setSmsEnabled(false);
         }
       }
     } catch (error: any) {
