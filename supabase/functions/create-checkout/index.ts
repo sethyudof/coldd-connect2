@@ -7,7 +7,11 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  console.log('Starting create-checkout function');
+  console.log('Request received:', {
+    method: req.method,
+    headers: Object.fromEntries(req.headers.entries()),
+    url: req.url
+  });
 
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -23,12 +27,19 @@ serve(async (req) => {
 
   try {
     // Parse request body
-    const requestData = await req.json();
+    const body = await req.text();
+    console.log('Raw request body:', body);
+    
+    const requestData = JSON.parse(body);
+    console.log('Parsed request data:', requestData);
+    
     const { priceId, returnUrl } = requestData;
-    console.log('Request payload:', { priceId, returnUrl });
+    console.log('Extracted values:', { priceId, returnUrl });
 
     // Initialize Stripe
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+    console.log('Stripe secret key present:', !!stripeSecretKey);
+    
     if (!stripeSecretKey) {
       console.error('STRIPE_SECRET_KEY not configured');
       throw new Error('Stripe configuration error');
@@ -41,6 +52,8 @@ serve(async (req) => {
 
     // Get auth user from Authorization header
     const authHeader = req.headers.get('Authorization');
+    console.log('Auth header present:', !!authHeader);
+    
     if (!authHeader) {
       console.error('No authorization header provided');
       throw new Error('Authentication required');
@@ -48,6 +61,8 @@ serve(async (req) => {
 
     // Extract JWT token and decode payload
     const token = authHeader.replace('Bearer ', '');
+    console.log('Token extracted from header');
+    
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -55,6 +70,11 @@ serve(async (req) => {
     }).join(''));
 
     const payload = JSON.parse(jsonPayload);
+    console.log('Token payload parsed:', { 
+      sub: payload.sub ? 'present' : 'missing',
+      email: payload.email ? 'present' : 'missing'
+    });
+
     const userId = payload.sub;
     const userEmail = payload.email;
 
