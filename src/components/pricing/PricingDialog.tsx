@@ -67,6 +67,7 @@ export const PricingDialog = () => {
                 key={tier.name}
                 name={tier.name}
                 description={tier.description}
+                features={tier.features}
                 price={isAnnual ? tier.annual.price : tier.monthly.price}
                 interval={isAnnual ? "/year" : "/month"}
                 priceId={currentPriceId}

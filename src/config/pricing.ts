@@ -18,6 +18,12 @@ export const PRICING_TIERS = [
   {
     name: "Pro",
     description: "Perfect for individuals who want to stay connected",
+    features: [
+      "Up to 100 SMS reminders per month",
+      "Smart contact categorization",
+      "Customizable reminder intervals",
+      "Priority support"
+    ],
     monthly: {
       price: "$3.99",
       priceId: TIER1_MONTHLY,
@@ -30,6 +36,12 @@ export const PRICING_TIERS = [
   {
     name: "Team",
     description: "Ideal for small teams and businesses",
+    features: [
+      "Up to 400 SMS reminders per month",
+      "All Pro features included",
+      "Advanced analytics",
+      "Dedicated account manager"
+    ],
     monthly: {
       price: "$9.99",
       priceId: TIER2_MONTHLY,

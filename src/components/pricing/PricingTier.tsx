@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
 
 interface PricingTierProps {
   name: string;
   description: string;
+  features: string[];
   price: string;
   interval: string;
   priceId: string;
@@ -12,6 +14,7 @@ interface PricingTierProps {
 export const PricingTier = ({
   name,
   description,
+  features,
   price,
   interval,
   priceId,
@@ -38,6 +41,14 @@ export const PricingTier = ({
         <span className="text-sm font-normal text-muted-foreground">
           {interval}
         </span>
+      </div>
+      <div className="space-y-2">
+        {features.map((feature, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-primary" />
+            <span className="text-sm">{feature}</span>
+          </div>
+        ))}
       </div>
       <Button 
         className="w-full" 
