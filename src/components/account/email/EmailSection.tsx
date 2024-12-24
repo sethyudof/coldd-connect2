@@ -23,9 +23,6 @@ export const EmailSection = ({ initialEmail }: { initialEmail: string }) => {
 
       const { data, error } = await supabase.auth.updateUser({
         email: email.trim(),
-        options: {
-          emailRedirectTo: window.location.origin
-        }
       });
 
       if (error) {
